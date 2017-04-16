@@ -1,0 +1,51 @@
+{
+  "name": "mongo-relay-connection",
+  "version": "0.0.1",
+  "description": "Helper for building relay connection from mongoose. Support dynamic collection, but only for single (unique or non-unique) field sorting.",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "pretest": "yarn run lint && yarn run build",
+    "lint": "eslint src/**/*.js",
+    "prepublish": "yarn run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackytck/mongo-relay-connection"
+  },
+  "keywords": [
+    "mongo",
+    "mongodb",
+    "mongooose",
+    "relay",
+    "graphql",
+    "graphql-relay"
+  ],
+  "author": "Jacky Tang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jackytck/mongo-relay-connection/issues"
+  },
+  "homepage": "https://github.com/jackytck/mongo-relay-connection#readme",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-eslint": "^7.2.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-node": "^4.2.2",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1"
+  },
+  "dependencies": {
+    "base-64": "^0.1.0",
+    "lodash": "^4.17.4"
+  },
+  "peerDependencies": {
+    "graphql": "^0.9.3",
+    "graphql-relay": "^0.5.1"
+  }
+}
