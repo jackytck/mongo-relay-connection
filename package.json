@@ -7,6 +7,8 @@
     "build": "babel src --out-dir lib",
     "pretest": "yarn run lint && yarn run build",
     "lint": "eslint src/**/*.js",
+    "test": "mocha -R spec",
+    "test-dev": "nodemon --exec 'mocha -R spec'",
     "prepublish": "yarn run build"
   },
   "repository": {
