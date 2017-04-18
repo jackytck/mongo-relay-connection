@@ -1,0 +1,224 @@
+{
+  "data": {
+    "allStarships": {
+      "edges": [
+        {
+          "node": {
+            "model": "CR90 corvette",
+            "starshipClass": "corvette"
+          }
+        },
+        {
+          "node": {
+            "model": "Imperial I-class Star Destroyer",
+            "starshipClass": "Star Destroyer"
+          }
+        },
+        {
+          "node": {
+            "model": "Sentinel-class landing craft",
+            "starshipClass": "landing craft"
+          }
+        },
+        {
+          "node": {
+            "model": "DS-1 Orbital Battle Station",
+            "starshipClass": "Deep Space Mobile Battlestation"
+          }
+        },
+        {
+          "node": {
+            "model": "YT-1300 light freighter",
+            "starshipClass": "Light freighter"
+          }
+        },
+        {
+          "node": {
+            "model": "BTL Y-wing",
+            "starshipClass": "assault starfighter"
+          }
+        },
+        {
+          "node": {
+            "model": "T-65 X-wing",
+            "starshipClass": "Starfighter"
+          }
+        },
+        {
+          "node": {
+            "model": "Twin Ion Engine Advanced x1",
+            "starshipClass": "Starfighter"
+          }
+        },
+        {
+          "node": {
+            "model": "Executor-class star dreadnought",
+            "starshipClass": "Star dreadnought"
+          }
+        },
+        {
+          "node": {
+            "model": "GR-75 medium transport",
+            "starshipClass": "Medium transport"
+          }
+        },
+        {
+          "node": {
+            "model": "Firespray-31-class patrol and attack",
+            "starshipClass": "Patrol craft"
+          }
+        },
+        {
+          "node": {
+            "model": "Lambda-class T-4a shuttle",
+            "starshipClass": "Armed government transport"
+          }
+        },
+        {
+          "node": {
+            "model": "EF76 Nebulon-B escort frigate",
+            "starshipClass": "Escort ship"
+          }
+        },
+        {
+          "node": {
+            "model": "MC80 Liberty type Star Cruiser",
+            "starshipClass": "Star Cruiser"
+          }
+        },
+        {
+          "node": {
+            "model": "RZ-1 A-wing Interceptor",
+            "starshipClass": "Starfighter"
+          }
+        },
+        {
+          "node": {
+            "model": "A/SF-01 B-wing starfighter",
+            "starshipClass": "Assault Starfighter"
+          }
+        },
+        {
+          "node": {
+            "model": "Consular-class cruiser",
+            "starshipClass": "Space cruiser"
+          }
+        },
+        {
+          "node": {
+            "model": "Lucrehulk-class Droid Control Ship",
+            "starshipClass": "Droid control ship"
+          }
+        },
+        {
+          "node": {
+            "model": "N-1 starfighter",
+            "starshipClass": "Starfighter"
+          }
+        },
+        {
+          "node": {
+            "model": "J-type 327 Nubian royal starship",
+            "starshipClass": "yacht"
+          }
+        },
+        {
+          "node": {
+            "model": "Star Courier",
+            "starshipClass": "Space Transport"
+          }
+        },
+        {
+          "node": {
+            "model": "J-type diplomatic barge",
+            "starshipClass": "Diplomatic barge"
+          }
+        },
+        {
+          "node": {
+            "model": "Botajef AA-9 Freighter-Liner",
+            "starshipClass": "freighter"
+          }
+        },
+        {
+          "node": {
+            "model": "Delta-7 Aethersprite-class interceptor",
+            "starshipClass": "Starfighter"
+          }
+        },
+        {
+          "node": {
+            "model": "H-type Nubian yacht",
+            "starshipClass": "yacht"
+          }
+        },
+        {
+          "node": {
+            "model": "Acclamator I-class assault ship",
+            "starshipClass": "assault ship"
+          }
+        },
+        {
+          "node": {
+            "model": "Punworcca 116-class interstellar sloop",
+            "starshipClass": "yacht"
+          }
+        },
+        {
+          "node": {
+            "model": "Providence-class carrier/destroyer",
+            "starshipClass": "capital ship"
+          }
+        },
+        {
+          "node": {
+            "model": "Theta-class T-2c shuttle",
+            "starshipClass": "transport"
+          }
+        },
+        {
+          "node": {
+            "model": "Senator-class Star Destroyer",
+            "starshipClass": "star destroyer"
+          }
+        },
+        {
+          "node": {
+            "model": "J-type star skiff",
+            "starshipClass": "yacht"
+          }
+        },
+        {
+          "node": {
+            "model": "Eta-2 Actis-class light interceptor",
+            "starshipClass": "starfighter"
+          }
+        },
+        {
+          "node": {
+            "model": "Aggressive Reconnaissance-170 starfighte",
+            "starshipClass": "starfighter"
+          }
+        },
+        {
+          "node": {
+            "model": "Munificent-class star frigate",
+            "starshipClass": "cruiser"
+          }
+        },
+        {
+          "node": {
+            "model": "Belbullab-22 starfighter",
+            "starshipClass": "starfighter"
+          }
+        },
+        {
+          "node": {
+            "model": "Alpha-3 Nimbus-class V-wing starfighter",
+            "starshipClass": "starfighter"
+          }
+        }
+      ]
+    }
+  }
+}
