@@ -166,7 +166,6 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   }
   const limit = first || last
   const nodes = await model.find(multiQuery).limit(limit).sort(multiSort)
-  // todo: append missing nodes
   let edges = nodes.map(node => {
     return {
       node: mapNode(node),
