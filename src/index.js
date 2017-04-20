@@ -12,6 +12,7 @@ import {
   has
 } from 'lodash'
 import base64 from 'base-64'
+import utf8 from 'utf8'
 
 /**
  * Create a type called `${name}Connection`.
@@ -53,12 +54,12 @@ function mrDateFromCursor (cursor) {
 
 function defaultToCursor (field, id) {
   const m = { field, id }
-  return base64.encode(JSON.stringify(m))
+  return base64.encode(utf8.encode(JSON.stringify(m)))
 }
 
 function defaultFromCursor (cursor) {
   try {
-    return JSON.parse(base64.decode(cursor))
+    return JSON.parse(utf8.decode(base64.decode(cursor)))
   } catch (e) {
     return {}
   }
