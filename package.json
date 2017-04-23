@@ -8,7 +8,7 @@
     "pretest": "yarn run lint && yarn run build",
     "lint": "eslint src/**/*.js",
     "test": "mocha --require babel-register -R spec",
-    "test-dev": "nodemon --exec 'mocha -R spec'",
+    "test-dev": "nodemon --exec 'mocha --require babel-register -R spec'",
     "prepublish": "yarn run build"
   },
   "repository": {
