@@ -1,8 +1,11 @@
 import 'babel-polyfill'
 import assert from 'assert'
 import { graphql } from 'graphql'
+import { sortBy } from 'lodash'
+import { expect } from 'chai'
 import Starship from './models/starship'
 import schema from './schema/schema'
+import starshipsJSON from './starships.json'
 
 describe('mongo data', () => {
   it('should fetch correct number of starships from mongo', async () => {
@@ -94,5 +97,26 @@ describe('pageInfo', () => {
     assert(!pageInfo.hasNextPage)
     assert(!pageInfo.startCursor)
     assert(!pageInfo.endCursor)
+  })
+})
+
+describe('edges', () => {
+  it('should fetch all the nodes in proper order', async () => {
+    const query = `
+      {
+        allStarships {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allStarships
+    const ref = sortBy(starshipsJSON.data.allStarships.edges, x => x.node.starshipClass)
+    expect(edges).to.deep.equal(ref)
   })
 })
