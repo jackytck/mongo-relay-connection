@@ -21,10 +21,10 @@ before(done => {
   mongoose.connect('mongodb://localhost/mongo-relay-connection-test')
   mongoose.connection
     .once('open', async () => {
-      console.log('Connected to mongo')
+      // console.log('Connected to mongo')
       await clearDB()
       await populateData()
-      console.log('Populated data')
+      // console.log('Populated data')
       done()
     })
     .on('error', error => {
