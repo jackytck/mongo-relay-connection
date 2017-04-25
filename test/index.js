@@ -1,7 +1,10 @@
 import 'babel-polyfill'
 import assert from 'assert'
 import { graphql } from 'graphql'
-import { sortBy } from 'lodash'
+import {
+  sortBy,
+  pick
+} from 'lodash'
 import { expect } from 'chai'
 import Starship from './models/starship'
 import schema from './schema/schema'
@@ -118,5 +121,36 @@ describe('edges', () => {
     const { edges } = res.data.allStarships
     const ref = sortBy(starshipsJSON.data.allStarships.edges, x => x.node.starshipClass)
     expect(edges).to.deep.equal(ref)
+  })
+})
+
+describe('first', () => {
+  it('should fetch the first n items after the cursor', async () => {
+    const n = 3
+    const ref = sortBy(starshipsJSON.data.allStarships.edges, x => x.node.starshipClass)
+
+    const query = after => {
+      return `
+        {
+          allStarships (first: ${n}, after: "${after}") {
+            edges {
+              node {
+                model
+                starshipClass
+              }
+              cursor
+            }
+          }
+        }
+      `
+    }
+
+    const res = await graphql(schema, query(''))
+    const { edges } = res.data.allStarships
+    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(ref.slice(0, n))
+
+    const res2 = await graphql(schema, query(edges[2].cursor))
+    const edges2 = res2.data.allStarships.edges
+    expect(edges2.map(e => pick(e, ['node']))).to.deep.equal(ref.slice(n, n * 2))
   })
 })
