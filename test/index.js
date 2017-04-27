@@ -181,3 +181,36 @@ describe('first + after on non-unique field', () => {
     expect(edges2.map(e => pick(e, ['node']))).to.deep.equal(ref.slice(16, 19))
   })
 })
+
+describe('last + before on non-unique field', () => {
+  it('should fetch the last n items before the cursor', async () => {
+    const pageQuery = `
+      {
+        allStarships (first: 30) {
+          pageInfo {
+            endCursor
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const { endCursor } = pageRes.data.allStarships.pageInfo
+
+    const query = `
+      {
+        allStarships (last: 6, before: "${endCursor}") {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+            cursor
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allStarships
+    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(ref.slice(23, 29))
+  })
+})
