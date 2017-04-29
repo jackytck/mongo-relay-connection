@@ -57,53 +57,98 @@ describe('pageInfo', () => {
   })
 })
 
+describe('edges', () => {
+  it('should fetch all the nodes in proper order', async () => {
+    const query = `
+      {
+        allStarships {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allStarships
+    expect(edges).to.deep.equal(ref)
+  })
+})
+
 describe('transverse forward', () => {
   it('should tranverse forward via page info cursor', async () => {
-    const query = after => {
+    const query = (first, after) => {
       return `
         {
-          allStarships(first: 10, after: "${after}") {
+          allStarships(first: ${first}, after: "${after}") {
             pageInfo {
               hasNextPage
               hasPreviousPage
               startCursor
               endCursor
             }
+            edges {
+              node {
+                model
+                starshipClass
+              }
+            }
           }
         }
       `
     }
-    const query1 = query('')
+
+    const query1 = query(1, '')
     let res = await graphql(schema, query1)
-    let { pageInfo } = res.data.allStarships
+    let { pageInfo, edges } = res.data.allStarships
     let { hasNextPage, endCursor } = pageInfo
     assert(hasNextPage)
     assert(endCursor)
+    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(ref.slice(0, 1))
 
-    const query2 = query(endCursor)
+    const query2 = query(10, endCursor)
     res = await graphql(schema, query2)
     pageInfo = res.data.allStarships.pageInfo
+    edges = res.data.allStarships.edges
     assert(pageInfo.hasNextPage)
     assert(pageInfo.endCursor)
+    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(ref.slice(1, 11))
 
-    const query3 = query(pageInfo.endCursor)
+    const query3 = query(10, pageInfo.endCursor)
     res = await graphql(schema, query3)
     pageInfo = res.data.allStarships.pageInfo
+    edges = res.data.allStarships.edges
     assert(pageInfo.hasNextPage)
     assert(pageInfo.endCursor)
+    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(ref.slice(11, 21))
 
-    const query4 = query(pageInfo.endCursor)
+    const query4 = query(10, pageInfo.endCursor)
     res = await graphql(schema, query4)
     pageInfo = res.data.allStarships.pageInfo
-    assert(!pageInfo.hasNextPage)
+    edges = res.data.allStarships.edges
+    assert(pageInfo.hasNextPage)
     assert(pageInfo.endCursor)
+    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(ref.slice(21, 31))
 
-    const query5 = query(pageInfo.endCursor)
+    const query5 = query(10, pageInfo.endCursor)
     res = await graphql(schema, query5)
     pageInfo = res.data.allStarships.pageInfo
+    edges = res.data.allStarships.edges
+    assert(!pageInfo.hasNextPage)
+    assert(pageInfo.startCursor)
+    assert(pageInfo.endCursor)
+    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(ref.slice(31))
+
+    const query6 = query(10, pageInfo.endCursor)
+    res = await graphql(schema, query6)
+    pageInfo = res.data.allStarships.pageInfo
+    edges = res.data.allStarships.edges
     assert(!pageInfo.hasNextPage)
     assert(!pageInfo.startCursor)
     assert(!pageInfo.endCursor)
+    expect(edges.length).to.equal(0)
   })
 })
 
@@ -177,26 +222,6 @@ describe('transverse backward', () => {
     pageInfo = res.data.allStarships.pageInfo
     assert(!pageInfo.hasPreviousPage)
     assert(!pageInfo.startCursor)
-  })
-})
-
-describe('edges', () => {
-  it('should fetch all the nodes in proper order', async () => {
-    const query = `
-      {
-        allStarships {
-          edges {
-            node {
-              model
-              starshipClass
-            }
-          }
-        }
-      }
-    `
-    const res = await graphql(schema, query)
-    const { edges } = res.data.allStarships
-    expect(edges).to.deep.equal(ref)
   })
 })
 
