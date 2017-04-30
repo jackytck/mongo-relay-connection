@@ -8,7 +8,7 @@ import {
 import { expect } from 'chai'
 import Starship from './models/starship'
 import schema from './schema/schema'
-import starshipsJSON from './starships.json'
+import starshipsJSON from './data/starships.json'
 
 const ref = sortBy(starshipsJSON.data.allStarships.edges, x => x.node.starshipClass)
 

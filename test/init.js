@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import Starship from './models/starship'
-import data from './starships.json'
+import data from './data/starships.json'
 
 mongoose.Promise = global.Promise
 
