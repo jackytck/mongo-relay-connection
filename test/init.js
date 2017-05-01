@@ -1,6 +1,8 @@
 import mongoose from 'mongoose'
 import Starship from './models/starship'
-import data from './data/starships.json'
+import Product from './models/product'
+import starshipData from './data/starships.json'
+import productData from './data/products.json'
 
 mongoose.Promise = global.Promise
 
@@ -8,12 +10,26 @@ function clearDB () {
   return Starship.remove()
 }
 
-function populateData () {
-  const { data: { allStarships: { edges } } } = data
+function populateStarship () {
+  const { data: { allStarships: { edges } } } = starshipData
   return Promise.all(edges.map(({ node }) => {
     const ship = new Starship(node)
     return ship.save()
   }))
+}
+
+function populateProduct () {
+  return Promise.all(productData.map(p => {
+    const product = new Product(p)
+    return product.save()
+  }))
+}
+
+function populateData () {
+  return Promise.all([
+    populateStarship(),
+    populateProduct()
+  ])
 }
 
 // executed only once
