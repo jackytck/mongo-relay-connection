@@ -7,7 +7,10 @@ import productData from './data/products.json'
 mongoose.Promise = global.Promise
 
 function clearDB () {
-  return Starship.remove()
+  return Promise.all([
+    Starship.remove(),
+    Product.remove()
+  ])
 }
 
 function populateStarship () {
