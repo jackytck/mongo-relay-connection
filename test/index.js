@@ -7,6 +7,7 @@ import {
 } from 'lodash'
 import { expect } from 'chai'
 import Starship from './models/starship'
+import Product from './models/product'
 import schema from './schema/schema'
 import starshipsJSON from './data/starships.json'
 
@@ -17,19 +18,48 @@ describe('mongo data', () => {
     const cnt = await Starship.count()
     assert(cnt === 36)
   })
+
+  it('should fetch correct number of products from mongo', async () => {
+    const cnt = await Product.count()
+    assert(cnt === 300)
+  })
+
+  it('should fetch correct number of food products from mongo', async () => {
+    const cnt = await Product.count({
+      type: {
+        $in: [
+          'Bacon',
+          'Cheese',
+          'Chicken',
+          'Chips',
+          'Fish',
+          'Pizza',
+          'Salad',
+          'Sausages',
+          'Tuna'
+        ]
+      }
+    })
+    assert(cnt === 102)
+  })
 })
 
 describe('totalCount', () => {
-  it('should fetch correct total count', async () => {
+  it('should fetch correct total counts', async () => {
     const query = `
       {
         allStarships {
           totalCount
         }
+        allFoodProducts {
+          totalCount
+        }
       }
     `
     const res = await graphql(schema, query)
-    assert(res.data.allStarships.totalCount === 36)
+    const { allStarships, allFoodProducts } = res.data
+    expect(allStarships.totalCount).to.equal(36)
+    expect(allFoodProducts.totalCount).to.equal(102)
   })
 })
 
