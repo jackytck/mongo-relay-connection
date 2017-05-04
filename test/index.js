@@ -64,7 +64,7 @@ describe('totalCount', () => {
 })
 
 describe('pageInfo', () => {
-  it('should fetch correct page info', async () => {
+  it('should fetch non-null page info', async () => {
     const query = `
       {
         allStarships {
@@ -75,15 +75,26 @@ describe('pageInfo', () => {
             endCursor
           }
         }
+        allFoodProducts {
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+        }
       }
     `
+    const expectNonNull = pageInfo => {
+      const { hasNextPage, hasPreviousPage, startCursor, endCursor } = pageInfo
+      assert(!hasNextPage)
+      assert(!hasPreviousPage)
+      assert(startCursor)
+      assert(endCursor)
+    }
     const res = await graphql(schema, query)
-    const { pageInfo } = res.data.allStarships
-    const { hasNextPage, hasPreviousPage, startCursor, endCursor } = pageInfo
-    assert(!hasNextPage)
-    assert(!hasPreviousPage)
-    assert(startCursor)
-    assert(endCursor)
+    expectNonNull(res.data.allStarships.pageInfo)
+    expectNonNull(res.data.allFoodProducts.pageInfo)
   })
 })
 
