@@ -10,6 +10,8 @@ import Starship from './models/starship'
 import Product from './models/product'
 import schema from './schema/schema'
 import starshipsJSON from './data/starships.json'
+import foodTypes from './data/foodTypes.json'
+import productsJSON from './data/products.json'
 
 const ref = sortBy(starshipsJSON.data.allStarships.edges, x => x.node.starshipClass)
 
@@ -26,19 +28,7 @@ describe('mongo data', () => {
 
   it('should fetch correct number of food products from mongo', async () => {
     const cnt = await Product.count({
-      type: {
-        $in: [
-          'Bacon',
-          'Cheese',
-          'Chicken',
-          'Chips',
-          'Fish',
-          'Pizza',
-          'Salad',
-          'Sausages',
-          'Tuna'
-        ]
-      }
+      type: { $in: foodTypes }
     })
     assert(cnt === 102)
   })

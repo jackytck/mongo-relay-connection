@@ -10,6 +10,7 @@ import Starship from './starship'
 import StarshipModel from '../../models/starship'
 import Product from './product'
 import ProductModel from '../../models/product'
+import foodTypes from '../../data/foodTypes.json'
 
 const RootQuery = new GraphQLObjectType({
   name: 'RootQuery',
@@ -29,19 +30,7 @@ const RootQuery = new GraphQLObjectType({
       args: mrArgs,
       resolve (parentValue, args) {
         const query = {
-          type: {
-            $in: [
-              'Bacon',
-              'Cheese',
-              'Chicken',
-              'Chips',
-              'Fish',
-              'Pizza',
-              'Salad',
-              'Sausages',
-              'Tuna'
-            ]
-          }
+          type: { $in: foodTypes }
         }
         const opts = {
           cursorField: 'price',
