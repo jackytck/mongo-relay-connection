@@ -148,7 +148,7 @@ describe('transverse forward', () => {
     let { hasNextPage, endCursor } = pageInfo
     assert(hasNextPage)
     assert(endCursor)
-    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(starshipsRef.slice(0, 1))
+    expect(edges).to.deep.equal(starshipsRef.slice(0, 1))
 
     const query2 = query(10, endCursor)
     res = await graphql(schema, query2)
@@ -156,7 +156,7 @@ describe('transverse forward', () => {
     edges = res.data.allStarships.edges
     assert(pageInfo.hasNextPage)
     assert(pageInfo.endCursor)
-    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(starshipsRef.slice(1, 11))
+    expect(edges).to.deep.equal(starshipsRef.slice(1, 11))
 
     const query3 = query(10, pageInfo.endCursor)
     res = await graphql(schema, query3)
@@ -164,7 +164,7 @@ describe('transverse forward', () => {
     edges = res.data.allStarships.edges
     assert(pageInfo.hasNextPage)
     assert(pageInfo.endCursor)
-    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(starshipsRef.slice(11, 21))
+    expect(edges).to.deep.equal(starshipsRef.slice(11, 21))
 
     const query4 = query(10, pageInfo.endCursor)
     res = await graphql(schema, query4)
@@ -172,7 +172,7 @@ describe('transverse forward', () => {
     edges = res.data.allStarships.edges
     assert(pageInfo.hasNextPage)
     assert(pageInfo.endCursor)
-    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(starshipsRef.slice(21, 31))
+    expect(edges).to.deep.equal(starshipsRef.slice(21, 31))
 
     const query5 = query(10, pageInfo.endCursor)
     res = await graphql(schema, query5)
@@ -181,7 +181,7 @@ describe('transverse forward', () => {
     assert(!pageInfo.hasNextPage)
     assert(pageInfo.startCursor)
     assert(pageInfo.endCursor)
-    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(starshipsRef.slice(31))
+    expect(edges).to.deep.equal(starshipsRef.slice(31))
 
     const query6 = query(10, pageInfo.endCursor)
     res = await graphql(schema, query6)
@@ -233,7 +233,7 @@ describe('transverse backward', () => {
     let { pageInfo, edges } = res.data.allStarships
     assert(pageInfo.hasPreviousPage)
     assert(pageInfo.startCursor)
-    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(starshipsRef.slice(25, 35))
+    expect(edges).to.deep.equal(starshipsRef.slice(25, 35))
 
     const query3 = query(pageInfo.startCursor)
     res = await graphql(schema, query3)
@@ -241,7 +241,7 @@ describe('transverse backward', () => {
     edges = res.data.allStarships.edges
     assert(pageInfo.hasPreviousPage)
     assert(pageInfo.startCursor)
-    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(starshipsRef.slice(15, 25))
+    expect(edges).to.deep.equal(starshipsRef.slice(15, 25))
 
     const query4 = query(pageInfo.startCursor)
     res = await graphql(schema, query4)
@@ -249,7 +249,7 @@ describe('transverse backward', () => {
     edges = res.data.allStarships.edges
     assert(pageInfo.hasPreviousPage)
     assert(pageInfo.startCursor)
-    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(starshipsRef.slice(5, 15))
+    expect(edges).to.deep.equal(starshipsRef.slice(5, 15))
 
     const query5 = query(pageInfo.startCursor)
     res = await graphql(schema, query5)
@@ -257,7 +257,7 @@ describe('transverse backward', () => {
     edges = res.data.allStarships.edges
     assert(!pageInfo.hasPreviousPage)
     assert(pageInfo.startCursor)
-    expect(edges.map(e => pick(e, ['node']))).to.deep.equal(starshipsRef.slice(0, 5))
+    expect(edges).to.deep.equal(starshipsRef.slice(0, 5))
 
     const query6 = query(pageInfo.startCursor)
     res = await graphql(schema, query6)
