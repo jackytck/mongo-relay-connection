@@ -268,7 +268,7 @@ describe('transverse forward', () => {
 })
 
 describe('transverse backward', () => {
-  it('should tranverse backward via page info cursor', async () => {
+  it('should transverse backward via page info cursor for all starships', async () => {
     const query = before => {
       return `
         {
@@ -335,6 +335,87 @@ describe('transverse backward', () => {
     const query6 = query(pageInfo.startCursor)
     res = await graphql(schema, query6)
     pageInfo = res.data.allStarships.pageInfo
+    assert(!pageInfo.hasPreviousPage)
+    assert(!pageInfo.startCursor)
+  })
+
+  it('should transverse backward via page info cursor for all food product', async () => {
+    const query = before => {
+      return `
+        {
+          allFoodProducts(last: 25, before: "${before}") {
+            pageInfo {
+              hasPreviousPage
+              startCursor
+            }
+            edges {
+              node {
+                name
+                type
+                price
+              }
+            }
+          }
+        }
+      `
+    }
+
+    const query1 = `
+      {
+        allFoodProducts {
+          pageInfo {
+            endCursor
+          }
+        }
+      }
+    `
+
+    let res = await graphql(schema, query1)
+    let { endCursor } = res.data.allFoodProducts.pageInfo
+    assert(endCursor)
+
+    const query2 = query(endCursor)
+    res = await graphql(schema, query2)
+    let { pageInfo, edges } = res.data.allFoodProducts
+    assert(pageInfo.hasPreviousPage)
+    assert(pageInfo.startCursor)
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(76, 101))
+
+    const query3 = query(pageInfo.startCursor)
+    res = await graphql(schema, query3)
+    pageInfo = res.data.allFoodProducts.pageInfo
+    edges = res.data.allFoodProducts.edges
+    assert(pageInfo.hasPreviousPage)
+    assert(pageInfo.startCursor)
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(51, 76))
+
+    const query4 = query(pageInfo.startCursor)
+    res = await graphql(schema, query4)
+    pageInfo = res.data.allFoodProducts.pageInfo
+    edges = res.data.allFoodProducts.edges
+    assert(pageInfo.hasPreviousPage)
+    assert(pageInfo.startCursor)
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(26, 51))
+
+    const query5 = query(pageInfo.startCursor)
+    res = await graphql(schema, query5)
+    pageInfo = res.data.allFoodProducts.pageInfo
+    edges = res.data.allFoodProducts.edges
+    assert(pageInfo.hasPreviousPage)
+    assert(pageInfo.startCursor)
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(1, 26))
+
+    const query6 = query(pageInfo.startCursor)
+    res = await graphql(schema, query6)
+    pageInfo = res.data.allFoodProducts.pageInfo
+    edges = res.data.allFoodProducts.edges
+    expect(edges[0].node).to.deep.equal(foodRef[0])
+    assert(!pageInfo.hasPreviousPage)
+    assert(pageInfo.startCursor)
+
+    const query7 = query(pageInfo.startCursor)
+    res = await graphql(schema, query7)
+    pageInfo = res.data.allFoodProducts.pageInfo
     assert(!pageInfo.hasPreviousPage)
     assert(!pageInfo.startCursor)
   })
