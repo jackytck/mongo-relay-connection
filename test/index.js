@@ -422,7 +422,7 @@ describe('transverse backward', () => {
 })
 
 describe('first', () => {
-  it('should fetch the first n items after the cursor', async () => {
+  it('should fetch the first n starships after the cursor', async () => {
     const n = 3
 
     const query = after => {
@@ -448,6 +448,35 @@ describe('first', () => {
     const res2 = await graphql(schema, query(edges[n - 1].cursor))
     const edges2 = res2.data.allStarships.edges
     expect(edges2.map(e => pick(e, ['node']))).to.deep.equal(starshipsRef.slice(n, n * 2))
+  })
+
+  it('should fetch the first n food product after the cursor', async () => {
+    const n = 3
+
+    const query = after => {
+      return `
+        {
+          allFoodProducts (first: ${n}, after: "${after}") {
+            edges {
+              node {
+                name
+                type
+                price
+              }
+              cursor
+            }
+          }
+        }
+      `
+    }
+
+    const res = await graphql(schema, query(''))
+    const { edges } = res.data.allFoodProducts
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(0, n))
+
+    const res2 = await graphql(schema, query(edges[n - 1].cursor))
+    const edges2 = res2.data.allFoodProducts.edges
+    expect(edges2.map(x => x.node)).to.deep.equal(foodRef.slice(n, n * 2))
   })
 })
 
