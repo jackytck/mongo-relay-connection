@@ -15,7 +15,7 @@ import productsJSON from './data/products.json'
 
 const starshipsRef = sortBy(starshipsJSON.data.allStarships.edges, x => x.node.starshipClass)
 const foodRef = sortBy(productsJSON.filter(x => foodTypes.indexOf(x.type) > -1), x => -x.price)
-// console.log(foodRef)
+// console.log(JSON.stringify(foodRef, null, 2))
 
 describe('mongo data', () => {
   it('should fetch correct number of starships from mongo', async () => {
@@ -535,7 +535,7 @@ describe('first + after on non-unique field', () => {
 })
 
 describe('last + before on non-unique field', () => {
-  it('should fetch the last n items before the cursor', async () => {
+  it('should fetch the last n starships before the cursor', async () => {
     const pageQuery = `
       {
         allStarships (first: 30) {
@@ -564,5 +564,37 @@ describe('last + before on non-unique field', () => {
     const res = await graphql(schema, query)
     const { edges } = res.data.allStarships
     expect(edges.map(e => pick(e, ['node']))).to.deep.equal(starshipsRef.slice(23, 29))
+  })
+
+  it('should fetch the last n food product before the cursor', async () => {
+    const pageQuery = `
+      {
+        allFoodProducts (first: 101) {
+          pageInfo {
+            endCursor
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const { endCursor } = pageRes.data.allFoodProducts.pageInfo
+
+    const query = `
+      {
+        allFoodProducts (last: 6, before: "${endCursor}") {
+          edges {
+            node {
+              name
+              type
+              price
+            }
+            cursor
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allFoodProducts
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(94, 100))
   })
 })
