@@ -661,3 +661,66 @@ describe('before', () => {
     expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(0, 79))
   })
 })
+
+describe('after', () => {
+  it('should fetch all the starships after the cursor', async () => {
+    const pageQuery = `
+      {
+        allStarships (first: 5) {
+          pageInfo {
+            endCursor
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const { endCursor } = pageRes.data.allStarships.pageInfo
+
+    const query = `
+      {
+        allStarships (after: "${endCursor}") {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allStarships
+    expect(edges).to.deep.equal(starshipsRef.slice(5))
+  })
+
+  it('should fetch all the food product after the cursor', async () => {
+    const pageQuery = `
+      {
+        allFoodProducts (first: 12) {
+          pageInfo {
+            endCursor
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const { endCursor } = pageRes.data.allFoodProducts.pageInfo
+
+    const query = `
+      {
+        allFoodProducts (after: "${endCursor}") {
+          edges {
+            node {
+              name
+              type
+              price
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allFoodProducts
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(12))
+  })
+})
