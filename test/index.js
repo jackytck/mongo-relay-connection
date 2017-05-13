@@ -15,6 +15,7 @@ import productsJSON from './data/products.json'
 
 const starshipsRef = sortBy(starshipsJSON.data.allStarships.edges, x => x.node.starshipClass)
 const foodRef = sortBy(productsJSON.filter(x => foodTypes.indexOf(x.type) > -1), x => -x.price)
+// console.log(JSON.stringify(starshipsRef, null, 2))
 // console.log(JSON.stringify(foodRef, null, 2))
 
 describe('mongo data', () => {
@@ -722,5 +723,80 @@ describe('after', () => {
     const res = await graphql(schema, query)
     const { edges } = res.data.allFoodProducts
     expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(12))
+  })
+})
+
+describe('after + before', () => {
+  it('should fetch all the starships after and before two given cursors', async () => {
+    const pageQuery = `
+      {
+        begin: allStarships(first: 8) {
+          pageInfo {
+            endCursor
+          }
+        }
+        end: allStarships(first: 20) {
+          pageInfo {
+            endCursor
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const begin = pageRes.data.begin.pageInfo.endCursor
+    const end = pageRes.data.end.pageInfo.endCursor
+
+    const query = `
+      {
+        allStarships(after: "${begin}", before: "${end}") {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allStarships
+    expect(edges).to.deep.equal(starshipsRef.slice(8, 19))
+  })
+
+  it('should fetch all the food product after and before two given cursors', async () => {
+    const pageQuery = `
+      {
+        begin: allFoodProducts(first: 23) {
+          pageInfo {
+            endCursor
+          }
+        }
+        end: allFoodProducts(first: 68) {
+          pageInfo {
+            endCursor
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const begin = pageRes.data.begin.pageInfo.endCursor
+    const end = pageRes.data.end.pageInfo.endCursor
+
+    const query = `
+      {
+        allFoodProducts(after: "${begin}", before: "${end}") {
+          edges {
+            node {
+              name
+              type
+              price
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allFoodProducts
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(23, 67))
   })
 })
