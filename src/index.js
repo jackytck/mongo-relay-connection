@@ -9,7 +9,7 @@ import {
   isNumber,
   reverse,
   last as _last,
-  has
+  isEmpty
 } from 'lodash'
 import base64 from 'base-64'
 import utf8 from 'utf8'
@@ -85,10 +85,13 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     [cursorField]: direction
   }
 
-  let range = {...query}
-  let tie = null
+  // let range = {...query}
+  // let tie = null
   let idSort = 1
   let toReverse = false
+
+  let afterQuery = {}
+  let beforeQuery = {}
 
   if (after) {
     const { field, id } = fromCursor(after)
@@ -98,21 +101,23 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     if (afterEdgeCount !== 0) {
       // Remove all elements of edges before and including afterEdge.
       if (direction === 1) {
-        range[cursorField] = { $gt: field }
+        afterQuery[cursorField] = { $gt: field }
       } else {
-        range[cursorField] = { $lt: field }
+        afterQuery[cursorField] = { $lt: field }
       }
     }
 
     // non unique case, need to fetch back the tie-ing docs too
     if (afterEdgeCount > 1) {
-      tie = {
-        ...query,
+      const tie = {
+        // ...query,
         [cursorField]: field,
         _id: { $gt: id }
       }
+      afterQuery = { $or: [tie, afterQuery] }
     }
   }
+  // console.log('after', JSON.stringify(afterQuery, null, 2))
 
   if (before) {
     const { field, id } = fromCursor(before)
@@ -121,42 +126,44 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     if (beforeEdgeCount !== 0) {
       // Remove all elements of edges after and including beforeEdge.
       if (direction === 1) {
-        range[cursorField] = { $lt: field }
+        beforeQuery[cursorField] = { $lt: field }
         sort[cursorField] = -1
       } else {
-        range[cursorField] = { $gt: field }
+        beforeQuery[cursorField] = { $gt: field }
         sort[cursorField] = 1
       }
 
       if (beforeEdgeCount > 1) {
-        tie = {
-          ...query,
+        const tie = {
+          // ...query,
           [cursorField]: field,
           _id: { $lt: id }
         }
+        beforeQuery = { $or: [tie, beforeQuery] }
       }
       idSort = -1
       toReverse = true
     }
   }
+  // console.log('before', JSON.stringify(afterQuery, null, 2))
 
   // in case cursorField is not unique
   const multiSort = [[cursorField, sort[cursorField]], ['_id', idSort]]
-  let multiQuery = tie ? { $or: [tie, range] } : range
+  // let multiQuery = tie ? { $or: [tie, range] } : range
 
-  // check if cursorField has already been appeared in original query
-  if (has(query, cursorField)) {
-    const original = {
-      [cursorField]: query[cursorField]
-    }
-    multiQuery = {
-      $and: [
-        original,
-        multiQuery
-      ]
-    }
+  const joinQuery = [
+    query,
+    afterQuery,
+    beforeQuery
+  ].filter(x => !isEmpty(x))
+
+  let finalQuery = {}
+  if (joinQuery.length > 1) {
+    finalQuery = { $and: joinQuery }
+  } else if (joinQuery.length === 1) {
+    finalQuery = joinQuery[0]
   }
-  // console.log(JSON.stringify(multiQuery, null, 2))
+  // console.log('final', JSON.stringify(finalQuery, null, 2))
 
   if (first && first < 0) {
     throw new Error(`first(${first}) could not be negative`)
@@ -166,7 +173,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     throw new Error(`last(${last}) could not be negative`)
   }
   const limit = first || last
-  const nodes = await model.find(multiQuery).limit(limit).sort(multiSort)
+  const nodes = await model.find(finalQuery).limit(limit).sort(multiSort)
   let edges = nodes.map(node => {
     return {
       node: mapNode(node),
@@ -177,7 +184,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     edges = reverse(edges)
   }
 
-  const edgesCount = await model.find(range).count()
+  const edgesCount = await model.find(finalQuery).count()
 
   let hasPreviousPage = false
   if (last && edgesCount > last) {
