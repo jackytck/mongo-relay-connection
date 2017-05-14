@@ -88,7 +88,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   // let range = {...query}
   // let tie = null
   let idSort = 1
-  let toReverse = false
+  // let toReverse = false
 
   let afterQuery = {}
   let beforeQuery = {}
@@ -119,6 +119,11 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   }
   // console.log('after', JSON.stringify(afterQuery, null, 2))
 
+  let flip = false
+  if (last) {
+    flip = true
+  }
+
   if (before) {
     const { field, id } = fromCursor(before)
     // Let beforeEdge be the edge in edges whose cursor is equal to the before argument.
@@ -127,10 +132,14 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
       // Remove all elements of edges after and including beforeEdge.
       if (direction === 1) {
         beforeQuery[cursorField] = { $lt: field }
-        sort[cursorField] = -1
+        if (flip) {
+          sort[cursorField] = -1
+        }
       } else {
         beforeQuery[cursorField] = { $gt: field }
-        sort[cursorField] = 1
+        if (flip) {
+          sort[cursorField] = 1
+        }
       }
 
       if (beforeEdgeCount > 1) {
@@ -141,14 +150,17 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
         }
         beforeQuery = { $or: [tie, beforeQuery] }
       }
-      idSort = -1
-      toReverse = true
+      if (flip) {
+        idSort = -1
+      }
+      // toReverse = true
     }
   }
   // console.log('before', JSON.stringify(afterQuery, null, 2))
 
   // in case cursorField is not unique
   const multiSort = [[cursorField, sort[cursorField]], ['_id', idSort]]
+  // console.log('sort', multiSort)
   // let multiQuery = tie ? { $or: [tie, range] } : range
 
   const joinQuery = [
@@ -173,6 +185,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     throw new Error(`last(${last}) could not be negative`)
   }
   const limit = first || last
+  // console.log('limit', limit)
   const nodes = await model.find(finalQuery).limit(limit).sort(multiSort)
   let edges = nodes.map(node => {
     return {
@@ -180,7 +193,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
       cursor: toCursor(node[cursorField], node.id)
     }
   })
-  if (toReverse) {
+  if (flip) {
     edges = reverse(edges)
   }
 
