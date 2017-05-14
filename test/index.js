@@ -800,3 +800,79 @@ describe('after + before', () => {
     expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(23, 67))
   })
 })
+
+describe('after + first + before', () => {
+  it('should fetch the first n starships after and before two given cursors', async () => {
+    const pageQuery = `
+      {
+        begin: allStarships(first: 10) {
+          pageInfo {
+            endCursor
+          }
+        }
+        end: allStarships(first: 28) {
+          pageInfo {
+            endCursor
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const begin = pageRes.data.begin.pageInfo.endCursor
+    const end = pageRes.data.end.pageInfo.endCursor
+
+    const query = `
+      {
+        allStarships(after: "${begin}", first: 7, before: "${end}") {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allStarships
+    // console.log(JSON.stringify(edges, null, 2))
+    expect(edges).to.deep.equal(starshipsRef.slice(10, 17))
+  })
+
+  it('should fetch all the fist n food product after and before two given cursors', async () => {
+    const pageQuery = `
+      {
+        begin: allFoodProducts(first: 48) {
+          pageInfo {
+            endCursor
+          }
+        }
+        end: allFoodProducts(first: 93) {
+          pageInfo {
+            endCursor
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const begin = pageRes.data.begin.pageInfo.endCursor
+    const end = pageRes.data.end.pageInfo.endCursor
+
+    const query = `
+      {
+        allFoodProducts(after: "${begin}", first: 10, before: "${end}") {
+          edges {
+            node {
+              name
+              type
+              price
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allFoodProducts
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(48, 58))
+  })
+})
