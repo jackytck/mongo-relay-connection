@@ -119,11 +119,6 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   }
   // console.log('after', JSON.stringify(afterQuery, null, 2))
 
-  let flip = false
-  if (last) {
-    flip = true
-  }
-
   if (before) {
     const { field, id } = fromCursor(before)
     // Let beforeEdge be the edge in edges whose cursor is equal to the before argument.
@@ -132,14 +127,8 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
       // Remove all elements of edges after and including beforeEdge.
       if (direction === 1) {
         beforeQuery[cursorField] = { $lt: field }
-        if (flip) {
-          sort[cursorField] = -1
-        }
       } else {
         beforeQuery[cursorField] = { $gt: field }
-        if (flip) {
-          sort[cursorField] = 1
-        }
       }
 
       if (beforeEdgeCount > 1) {
@@ -150,10 +139,6 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
         }
         beforeQuery = { $or: [tie, beforeQuery] }
       }
-      if (flip) {
-        idSort = -1
-      }
-      // toReverse = true
     }
   }
   // console.log('before', JSON.stringify(afterQuery, null, 2))
@@ -162,6 +147,10 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   const multiSort = [[cursorField, sort[cursorField]], ['_id', idSort]]
   // console.log('sort', multiSort)
   // let multiQuery = tie ? { $or: [tie, range] } : range
+  if (last) {
+    multiSort[0][1] = direction * -1
+    multiSort[1][1] = -1
+  }
 
   const joinQuery = [
     query,
@@ -193,7 +182,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
       cursor: toCursor(node[cursorField], node.id)
     }
   })
-  if (flip) {
+  if (last) {
     edges = reverse(edges)
   }
 
