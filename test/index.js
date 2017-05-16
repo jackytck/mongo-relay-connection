@@ -876,3 +876,42 @@ describe('after + first + before', () => {
     expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(48, 58))
   })
 })
+
+describe('last', () => {
+  it('should fetch the last n starships', async () => {
+    const query = `
+      {
+        allStarships(last: 12) {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allStarships
+    expect(edges).to.deep.equal(starshipsRef.slice(24))
+  })
+
+  it('should fetch the last n food product', async () => {
+    const query = `
+      {
+        allFoodProducts(last: 20) {
+          edges {
+            node {
+              name
+              type
+              price
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allFoodProducts
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(82))
+  })
+})
