@@ -79,7 +79,13 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   if (!isNumber(direction)) {
     direction = 1
   }
-  const { after, first, before, last } = args
+  const { after, first, before } = args
+  let last = args.last
+
+  // if both first and last are given, last is ignored
+  if (first && last) {
+    last = null
+  }
 
   let sort = {
     [cursorField]: direction
