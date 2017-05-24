@@ -1324,3 +1324,78 @@ describe('after + first + last', () => {
   })
 })
 
+describe('after + first + before + last', () => {
+  it('should ignore last and fetch the first 9 starships after and before two given cursors', async () => {
+    const pageQuery = `
+      {
+        begin: allStarships(first: 12) {
+          pageInfo {
+            endCursor
+          }
+        }
+        end: allStarships(first: 25) {
+          pageInfo {
+            endCursor
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const begin = pageRes.data.begin.pageInfo.endCursor
+    const end = pageRes.data.end.pageInfo.endCursor
+
+    const query = `
+      {
+        allStarships(after: "${begin}", first: 9, before: "${end}", last: 3) {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allStarships
+    expect(edges).to.deep.equal(starshipsRef.slice(12, 21))
+  })
+
+  it('should fetch the fist 28 food product after and before two given cursors', async () => {
+    const pageQuery = `
+      {
+        begin: allFoodProducts(first: 36) {
+          pageInfo {
+            endCursor
+          }
+        }
+        end: allFoodProducts(first: 96) {
+          pageInfo {
+            endCursor
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const begin = pageRes.data.begin.pageInfo.endCursor
+    const end = pageRes.data.end.pageInfo.endCursor
+
+    const query = `
+      {
+        allFoodProducts(after: "${begin}", first: 28, before: "${end}", last: 6) {
+          edges {
+            node {
+              name
+              type
+              price
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allFoodProducts
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(36, 64))
+  })
+})
+
