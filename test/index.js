@@ -15,8 +15,19 @@ import productsJSON from './data/products.json'
 
 const starshipsRef = sortBy(starshipsJSON.data.allStarships.edges, x => x.node.starshipClass)
 const foodRef = sortBy(productsJSON.filter(x => foodTypes.indexOf(x.type) > -1), x => -x.price)
+const nonFoodRef = sortBy(productsJSON.filter(x => foodTypes.indexOf(x.type) === -1), x => -x.price).map(x => {
+  const format = p => +p.toFixed(2)
+  return {
+    name: x.name,
+    type: x.type,
+    usd: format(x.price / 7.78),
+    euro: format(x.price / 8.71),
+    yen: format(x.price * 14.36)
+  }
+})
 // console.log(JSON.stringify(starshipsRef, null, 2))
 // console.log(JSON.stringify(foodRef, null, 2))
+// console.log(JSON.stringify(nonFoodRef, null, 2))
 
 describe('mongo data', () => {
   it('should fetch correct number of starships from mongo', async () => {
@@ -1399,3 +1410,25 @@ describe('after + first + before + last', () => {
   })
 })
 
+describe('mapNode option', () => {
+  it('should map the raw price to USD, EURO and YEN for non-food product', async () => {
+    const query = `
+      {
+        allNonFoodProducts {
+          edges {
+            node {
+              name
+              type
+              usd
+              euro
+              yen
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allNonFoodProducts
+    expect(edges.map(x => x.node)).to.deep.equal(nonFoodRef)
+  })
+})
