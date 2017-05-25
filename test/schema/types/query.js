@@ -8,7 +8,10 @@ import {
 } from '../../../src'
 import Starship from './starship'
 import StarshipModel from '../../models/starship'
-import Product from './product'
+import {
+  Product,
+  ProductPrice
+} from './product'
 import ProductModel from '../../models/product'
 import foodTypes from '../../data/foodTypes.json'
 
@@ -35,6 +38,30 @@ const RootQuery = new GraphQLObjectType({
         const opts = {
           cursorField: 'price',
           direction: -1
+        }
+        return mrResolve(args, ProductModel, query, opts)
+      }
+    },
+    allNonFoodProducts: {
+      type: mrType('NonFoodProduct', ProductPrice),
+      args: mrArgs,
+      resolve (parentValue, args) {
+        const query = {
+          type: { $nin: foodTypes }
+        }
+        const format = p => +p.toFixed(2)
+        const opts = {
+          cursorField: 'price',
+          direction: -1,
+          mapNode: x => {
+            return {
+              name: x.name,
+              type: x.type,
+              usd: format(x.price / 7.78),
+              euro: format(x.price / 8.71),
+              yen: format(x.price * 14.36)
+            }
+          }
         }
         return mrResolve(args, ProductModel, query, opts)
       }
