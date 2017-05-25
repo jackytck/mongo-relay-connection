@@ -2,7 +2,8 @@ import {
   GraphQLObjectType,
   GraphQLID,
   GraphQLString,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLFloat
 } from 'graphql'
 
 const Product = new GraphQLObjectType({
@@ -15,4 +16,19 @@ const Product = new GraphQLObjectType({
   }
 })
 
-export default Product
+const ProductPrice = new GraphQLObjectType({
+  name: 'ProductPrice',
+  fields: {
+    id: { type: GraphQLID },
+    name: { type: GraphQLString },
+    type: { type: GraphQLString },
+    usd: { type: GraphQLFloat },
+    euro: { type: GraphQLFloat },
+    yen: { type: GraphQLFloat }
+  }
+})
+
+export {
+  Product,
+  ProductPrice
+}
