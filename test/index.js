@@ -15,7 +15,9 @@ import foodTypes from './data/foodTypes.json'
 import productsJSON from './data/products.json'
 import {
   mrDefaultToCursor,
-  mrDefaultFromCursor
+  mrDefaultFromCursor,
+  mrDateToCursor,
+  mrDateFromCursor
 } from '../src'
 
 const starshipsRef = sortBy(starshipsJSON.data.allStarships.edges, x => x.node.starshipClass)
@@ -1451,6 +1453,24 @@ describe('default cursors', () => {
   it('should map cursor back to (field, id)', () => {
     const back = mrDefaultFromCursor(cursor)
     expect(back.field).to.equal(field)
+    expect(back.id).to.equal(id)
+  })
+})
+
+describe('date cursors', () => {
+  const date = new Date()
+  const id = mongoose.Types.ObjectId().toString()
+  let cursor = ''
+  it('should map (date, id) to cursor', () => {
+    cursor = mrDateToCursor(date, id)
+    expect(cursor).to.not.equal(null)
+    expect(cursor.length).to.not.equal(0)
+  })
+
+  it('should map cursor back to (date, id)', () => {
+    const back = mrDateFromCursor(cursor)
+    expect(back.field).to.be.an.instanceof(Date)
+    expect(back.field.getTime()).to.equal(date.getTime())
     expect(back.id).to.equal(id)
   })
 })
