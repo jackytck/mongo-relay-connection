@@ -5,6 +5,7 @@ import {
   sortBy,
   pick
 } from 'lodash'
+import mongoose from 'mongoose'
 import { expect } from 'chai'
 import Starship from './models/starship'
 import Product from './models/product'
@@ -12,6 +13,10 @@ import schema from './schema/schema'
 import starshipsJSON from './data/starships.json'
 import foodTypes from './data/foodTypes.json'
 import productsJSON from './data/products.json'
+import {
+  mrDefaultToCursor,
+  mrDefaultFromCursor
+} from '../src'
 
 const starshipsRef = sortBy(starshipsJSON.data.allStarships.edges, x => x.node.starshipClass)
 const foodRef = sortBy(productsJSON.filter(x => foodTypes.indexOf(x.type) > -1), x => -x.price)
@@ -1430,5 +1435,22 @@ describe('mapNode option', () => {
     const res = await graphql(schema, query)
     const { edges } = res.data.allNonFoodProducts
     expect(edges.map(x => x.node)).to.deep.equal(nonFoodRef)
+  })
+})
+
+describe('default cursors', () => {
+  const field = 'こんにちは世界2.71828182845904523536028'
+  const id = mongoose.Types.ObjectId().toString()
+  let cursor = ''
+  it('should map (field, id) to cursor', () => {
+    cursor = mrDefaultToCursor(field, id)
+    expect(cursor).to.not.equal(null)
+    expect(cursor.length).to.not.equal(0)
+  })
+
+  it('should map cursor back to (field, id)', () => {
+    const back = mrDefaultFromCursor(cursor)
+    expect(back.field).to.equal(field)
+    expect(back.id).to.equal(id)
   })
 })
