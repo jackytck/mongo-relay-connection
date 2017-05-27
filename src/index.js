@@ -52,12 +52,12 @@ function mrDateFromCursor (cursor) {
   }
 }
 
-function defaultToCursor (field, id) {
+function mrDefaultToCursor (field, id) {
   const m = { field, id }
   return base64.encode(utf8.encode(JSON.stringify(m)))
 }
 
-function defaultFromCursor (cursor) {
+function mrDefaultFromCursor (cursor) {
   try {
     return JSON.parse(utf8.decode(base64.decode(cursor)))
   } catch (e) {
@@ -75,7 +75,7 @@ function defaultFromCursor (cursor) {
  * @param {string} cursorField Unique field used in sorting and constructing the cursor.
  * @param {number} direction 1 to sort ascendingly, -1 to sort decendingly.
  */
-async function mrResolve (args, model, query = {}, { cursorField = '_id', direction = 1, toCursor = defaultToCursor, fromCursor = defaultFromCursor, mapNode = x => x } = {}) {
+async function mrResolve (args, model, query = {}, { cursorField = '_id', direction = 1, toCursor = mrDefaultToCursor, fromCursor = mrDefaultFromCursor, mapNode = x => x } = {}) {
   if (!isNumber(direction)) {
     direction = 1
   }
@@ -228,6 +228,8 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
 export {
   mrType,
   connectionArgs as mrArgs,
+  mrDefaultToCursor,
+  mrDefaultFromCursor,
   mrDateToCursor,
   mrDateFromCursor,
   mrResolve
