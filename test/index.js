@@ -931,6 +931,20 @@ describe('last', () => {
     const { edges } = res.data.allFoodProducts
     expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(82))
   })
+
+  it('should throw on negative last', async () => {
+    const last = -3
+    const query = `
+      {
+        allFoodProducts(last: ${last}) {
+          totalCount
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    expect(res.errors).to.not.equal(null)
+    expect(res.errors[0].message).to.equal(`last(${last}) could not be negative`)
+  })
 })
 
 describe('first + before', () => {
