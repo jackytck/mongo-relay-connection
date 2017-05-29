@@ -7,9 +7,20 @@
     "build": "babel src --out-dir lib",
     "pretest": "yarn run lint && yarn run build",
     "lint": "eslint src/**/*.js",
-    "test": "mocha --require babel-register -R spec",
-    "test-dev": "nodemon --exec 'mocha --require babel-register -R spec'",
+    "test": "cross-env NODE_ENV=test nyc mocha -R spec",
+    "test-dev": "nodemon --exec 'cross-env NODE_ENV=test nyc mocha -R spec'",
     "prepublish": "yarn run build"
+  },
+  "nyc": {
+    "require": [
+      "babel-register"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "sourceMap": false,
+    "instrument": false
   },
   "repository": {
     "type": "git",
