@@ -104,13 +104,11 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     // Let afterEdge be the edge in edges whose cursor is equal to the after argument.
     // if field is found, if it is unique, then count is 1, otherwise larger than 1.
     const afterEdgeCount = await model.count({ ...query, [cursorField]: field })
-    if (afterEdgeCount !== 0) {
-      // Remove all elements of edges before and including afterEdge.
-      if (direction === 1) {
-        afterQuery[cursorField] = { $gt: field }
-      } else {
-        afterQuery[cursorField] = { $lt: field }
-      }
+    // Remove all elements of edges before and including afterEdge.
+    if (direction === 1) {
+      afterQuery[cursorField] = { $gt: field }
+    } else {
+      afterQuery[cursorField] = { $lt: field }
     }
 
     // non unique case, need to fetch back the tie-ing docs too
@@ -129,22 +127,20 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     const { field, id } = fromCursor(before)
     // Let beforeEdge be the edge in edges whose cursor is equal to the before argument.
     const beforeEdgeCount = await model.count({ ...query, [cursorField]: field })
-    if (beforeEdgeCount !== 0) {
-      // Remove all elements of edges after and including beforeEdge.
-      if (direction === 1) {
-        beforeQuery[cursorField] = { $lt: field }
-      } else {
-        beforeQuery[cursorField] = { $gt: field }
-      }
+    // Remove all elements of edges after and including beforeEdge.
+    if (direction === 1) {
+      beforeQuery[cursorField] = { $lt: field }
+    } else {
+      beforeQuery[cursorField] = { $gt: field }
+    }
 
-      if (beforeEdgeCount > 1) {
-        const tie = {
+    if (beforeEdgeCount > 1) {
+      const tie = {
           // ...query,
-          [cursorField]: field,
-          _id: { $lt: id }
-        }
-        beforeQuery = { $or: [tie, beforeQuery] }
+        [cursorField]: field,
+        _id: { $lt: id }
       }
+      beforeQuery = { $or: [tie, beforeQuery] }
     }
   }
   // console.log('before', JSON.stringify(afterQuery, null, 2))
