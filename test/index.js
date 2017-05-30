@@ -1483,6 +1483,11 @@ describe('default cursors', () => {
     expect(back.field).to.equal(field)
     expect(back.id).to.equal(id)
   })
+
+  it('should handle invalid cursor', () => {
+    const back = mrDefaultFromCursor(`${cursor}maths`)
+    expect(back).to.be.an('object')
+  })
 })
 
 describe('date cursors', () => {
