@@ -1507,3 +1507,200 @@ describe('date cursors', () => {
     expect(back.id).to.equal(id)
   })
 })
+
+describe('after a valid but removed cursor', () => {
+  it('should fetch all the starships after the removed cursor', async () => {
+    const pageQuery = `
+      {
+        allStarships (first: 5) {
+          pageInfo {
+            endCursor
+          }
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const { endCursor } = pageRes.data.allStarships.pageInfo
+
+    // remove the last node from db
+    const rmId = pageRes.data.allStarships.edges[4].node.id
+    const rmNode = await Starship.findOne({ _id: rmId })
+    await rmNode.remove()
+
+    const query = `
+      {
+        allStarships (after: "${endCursor}") {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allStarships
+    expect(edges).to.deep.equal(starshipsRef.slice(5))
+
+    // push back the removed node
+    await new Starship({
+      _id: rmId,
+      model: rmNode.model,
+      starshipClass: rmNode.starshipClass
+    }).save()
+  })
+
+  it('should fetch all the food product after the removed cursor', async () => {
+    const pageQuery = `
+      {
+        allFoodProducts (first: 12) {
+          pageInfo {
+            endCursor
+          }
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const { endCursor } = pageRes.data.allFoodProducts.pageInfo
+
+    // remove the last node from db
+    const rmId = pageRes.data.allFoodProducts.edges[11].node.id
+    const rmNode = await Product.findOne({ _id: rmId })
+    await rmNode.remove()
+
+    const query = `
+      {
+        allFoodProducts (after: "${endCursor}") {
+          edges {
+            node {
+              name
+              type
+              price
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allFoodProducts
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(12))
+
+    // push back the removed node
+    await new Product({
+      _id: rmId,
+      name: rmNode.name,
+      type: rmNode.type,
+      price: rmNode.price
+    }).save()
+  })
+})
+
+describe('before a valid but removed cursor', () => {
+  it('should fetch all the starships before the removed cursor', async () => {
+    const pageQuery = `
+      {
+        allStarships (first: 30) {
+          pageInfo {
+            endCursor
+          }
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const { endCursor } = pageRes.data.allStarships.pageInfo
+
+    // remove the last node from db
+    const rmId = pageRes.data.allStarships.edges[29].node.id
+    const rmNode = await Starship.findOne({ _id: rmId })
+    await rmNode.remove()
+
+    const query = `
+      {
+        allStarships (before: "${endCursor}") {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allStarships
+    expect(edges).to.deep.equal(starshipsRef.slice(0, 29))
+
+    // push back the removed node
+    await new Starship({
+      _id: rmId,
+      model: rmNode.model,
+      starshipClass: rmNode.starshipClass
+    }).save()
+  })
+
+  it('should fetch all the food product before the removed cursor', async () => {
+    const pageQuery = `
+      {
+        allFoodProducts (first: 80) {
+          pageInfo {
+            endCursor
+          }
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `
+    const pageRes = await graphql(schema, pageQuery)
+    const { endCursor } = pageRes.data.allFoodProducts.pageInfo
+
+    // remove the last node from db
+    const rmId = pageRes.data.allFoodProducts.edges[79].node.id
+    const rmNode = Product.findOne({ _id: rmId })
+    await rmNode.remove()
+
+    const query = `
+      {
+        allFoodProducts (before: "${endCursor}") {
+          edges {
+            node {
+              name
+              type
+              price
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { edges } = res.data.allFoodProducts
+    expect(edges.map(x => x.node)).to.deep.equal(foodRef.slice(0, 79))
+
+    // push back the removed node
+    await new Product({
+      _id: rmId,
+      name: rmNode.name,
+      type: rmNode.type,
+      price: rmNode.price
+    }).save()
+  })
+})
+
