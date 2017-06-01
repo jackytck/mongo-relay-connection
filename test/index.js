@@ -1724,3 +1724,23 @@ describe('before a valid but removed cursor', () => {
   })
 })
 
+describe('default resolve() query and options', () => {
+  it('should fetch all starships sorted by id', async () => {
+    const query = `
+      {
+        defaultQueryOpts {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { defaultQueryOpts } = res.data
+    const ref = starshipsJSON.data.allStarships.edges
+    expect(defaultQueryOpts.edges).to.deep.equal(ref)
+  })
+})
