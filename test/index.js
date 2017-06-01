@@ -1468,6 +1468,26 @@ describe('mapNode option', () => {
   })
 })
 
+describe('direction option', () => {
+  it('should fallback to direction: 1 if NaN is given', async () => {
+    const query = `
+      {
+        nanDirection {
+          edges {
+            node {
+              model
+              starshipClass
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    expect(res.errors).to.equal(undefined)
+    expect(res.data.nanDirection.edges).to.deep.equal(starshipsRef)
+  })
+})
+
 describe('default cursors', () => {
   const field = 'こんにちは世界2.71828182845904523536028'
   const id = mongoose.Types.ObjectId().toString()

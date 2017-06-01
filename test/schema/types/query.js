@@ -28,6 +28,17 @@ const RootQuery = new GraphQLObjectType({
         return mrResolve(args, StarshipModel, {}, opts)
       }
     },
+    nanDirection: {
+      type: mrType('nanDirection', Starship),
+      args: mrArgs,
+      resolve (parentValue, args) {
+        const opts = {
+          cursorField: 'starshipClass',
+          direction: 'quantum mechanics'
+        }
+        return mrResolve(args, StarshipModel, {}, opts)
+      }
+    },
     allFoodProducts: {
       type: mrType('FoodProduct', Product),
       args: mrArgs,
