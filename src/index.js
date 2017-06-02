@@ -68,12 +68,12 @@ function mrDefaultFromCursor (cursor) {
 /**
  * Query and resolve according to the pagination algorithm.
  * ref: https://facebook.github.io/relay/graphql/connections.htm#sec-Pagination-algorithm
- * note: Due to mongo 'limit' query, { before + first } is treated the same as { before + last }
  * @param {object} args Arguments from parent value.
  * @param {object} model Mongoose model
  * @param {object} query Mongo query to get all documents.
  * @param {string} cursorField Unique field used in sorting and constructing the cursor.
  * @param {number} direction 1 to sort ascendingly, -1 to sort decendingly.
+ * note: if both first and last are given, then last is ignored
  */
 async function mrResolve (args, model, query = {}, { cursorField = '_id', direction = 1, toCursor = mrDefaultToCursor, fromCursor = mrDefaultFromCursor, mapNode = x => x } = {}) {
   if (!isNumber(direction)) {
@@ -91,10 +91,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     [cursorField]: direction
   }
 
-  // let range = {...query}
-  // let tie = null
   let idSort = 1
-  // let toReverse = false
 
   let afterQuery = {}
   let beforeQuery = {}
@@ -121,7 +118,6 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
       afterQuery = { $or: [tie, afterQuery] }
     }
   }
-  // console.log('after', JSON.stringify(afterQuery, null, 2))
 
   if (before) {
     const { field, id } = fromCursor(before)
@@ -143,12 +139,9 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
       beforeQuery = { $or: [tie, beforeQuery] }
     }
   }
-  // console.log('before', JSON.stringify(afterQuery, null, 2))
 
   // in case cursorField is not unique
   const multiSort = [[cursorField, sort[cursorField]], ['_id', idSort]]
-  // console.log('sort', multiSort)
-  // let multiQuery = tie ? { $or: [tie, range] } : range
   if (last) {
     multiSort[0][1] = direction * -1
     multiSort[1][1] = -1
@@ -166,7 +159,6 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   } else if (joinQuery.length === 1) {
     finalQuery = joinQuery[0]
   }
-  // console.log('final', JSON.stringify(finalQuery, null, 2))
 
   if (first && first < 0) {
     throw new Error(`first(${first}) could not be negative`)
@@ -176,7 +168,6 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     throw new Error(`last(${last}) could not be negative`)
   }
   const limit = first || last
-  // console.log('limit', limit)
   const nodes = await model.find(finalQuery).limit(limit).sort(multiSort)
   let edges = nodes.map(node => {
     return {
