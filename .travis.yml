@@ -13,3 +13,5 @@ before_script:
   - sleep 15
 script:
   - yarn test
+after_script:
+  - yarn run coveralls

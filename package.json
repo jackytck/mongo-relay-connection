@@ -9,7 +9,8 @@
     "lint": "eslint src/**/*.js",
     "test": "cross-env NODE_ENV=test nyc mocha -R spec",
     "test-dev": "nodemon --exec 'cross-env NODE_ENV=test nyc mocha -R spec'",
-    "prepublish": "yarn run build"
+    "prepublish": "yarn run build",
+    "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "nyc": {
     "require": [
@@ -48,6 +49,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "chai": "^3.5.0",
+    "coveralls": "^2.13.1",
     "cross-env": "^5.0.0",
     "eslint": "^3.19.0",
     "eslint-config-standard": "^10.2.1",
