@@ -1,5 +1,10 @@
 {
-  "presets": ["es2015", "stage-0"],
+  "presets": [["env", {
+    "targets": {
+      "node": "v6"
+    }
+  }]],
+  "plugins": ["transform-object-rest-spread"],
   "env": {
     "test": {
       "plugins": [ "istanbul" ]
