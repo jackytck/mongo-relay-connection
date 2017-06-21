@@ -132,7 +132,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
 
     if (beforeEdgeCount > 1) {
       const tie = {
-          // ...query,
+        // ...query,
         [cursorField]: field,
         _id: { $lt: id }
       }
