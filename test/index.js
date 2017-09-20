@@ -9,10 +9,12 @@ import mongoose from 'mongoose'
 import { expect } from 'chai'
 import Starship from './models/starship'
 import Product from './models/product'
+import File from './models/file'
 import schema from './schema/schema'
 import starshipsJSON from './data/starships.json'
 import foodTypes from './data/foodTypes.json'
 import productsJSON from './data/products.json'
+import filesJSON from './data/files.json'
 import {
   mrDefaultToCursor,
   mrDefaultFromCursor,
@@ -32,9 +34,11 @@ const nonFoodRef = sortBy(productsJSON.filter(x => foodTypes.indexOf(x.type) ===
     yen: format(x.price * 14.36)
   }
 })
+const fileRef = sortBy(filesJSON.filter(x => x.stats.size >= 500), x => -x.stats.size)
 // console.log(JSON.stringify(starshipsRef, null, 2))
 // console.log(JSON.stringify(foodRef, null, 2))
 // console.log(JSON.stringify(nonFoodRef, null, 2))
+// console.log(JSON.stringify(fileRef, null, 2))
 
 describe('mongo data', () => {
   it('should fetch correct number of starships from mongo', async () => {
@@ -53,6 +57,11 @@ describe('mongo data', () => {
     })
     assert(cnt === 102)
   })
+
+  it('should fetch correct number of files from mongo', async () => {
+    const cnt = await File.count()
+    assert(cnt === 300)
+  })
 })
 
 describe('totalCount', () => {
@@ -65,12 +74,16 @@ describe('totalCount', () => {
         allFoodProducts {
           totalCount
         }
+        allFiles {
+          totalCount
+        }
       }
     `
     const res = await graphql(schema, query)
-    const { allStarships, allFoodProducts } = res.data
+    const { allStarships, allFoodProducts, allFiles } = res.data
     expect(allStarships.totalCount).to.equal(36)
     expect(allFoodProducts.totalCount).to.equal(102)
+    expect(allFiles.totalCount).to.equal(152)
   })
 })
 
