@@ -65,6 +65,10 @@ function mrDefaultFromCursor (cursor) {
   }
 }
 
+function leaf (object, path) {
+  return path.split('.').reduce((value, key) => value[key], object)
+}
+
 /**
  * Query and resolve according to the pagination algorithm.
  * ref: https://facebook.github.io/relay/graphql/connections.htm#sec-Pagination-algorithm
@@ -172,7 +176,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   let edges = nodes.map(node => {
     return {
       node: mapNode(node),
-      cursor: toCursor(node[cursorField], node.id)
+      cursor: toCursor(leaf(node, cursorField), node.id)
     }
   })
   if (last) {
