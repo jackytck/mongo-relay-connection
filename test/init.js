@@ -1,15 +1,18 @@
 import mongoose from 'mongoose'
 import Starship from './models/starship'
 import Product from './models/product'
+import File from './models/file'
 import starshipData from './data/starships.json'
 import productData from './data/products.json'
+import fileData from './data/files.json'
 
 mongoose.Promise = global.Promise
 
 function clearDB () {
   return Promise.all([
     Starship.remove(),
-    Product.remove()
+    Product.remove(),
+    File.remove()
   ])
 }
 
@@ -28,10 +31,18 @@ function populateProduct () {
   }))
 }
 
+function populateFile () {
+  return Promise.all(fileData.map(f => {
+    const file = new File(f)
+    return file.save()
+  }))
+}
+
 function populateData () {
   return Promise.all([
     populateStarship(),
-    populateProduct()
+    populateProduct(),
+    populateFile()
   ])
 }
 
