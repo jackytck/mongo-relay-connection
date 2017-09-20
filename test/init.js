@@ -48,7 +48,7 @@ function populateData () {
 
 // executed only once
 before(done => {
-  mongoose.connect('mongodb://localhost/mongo-relay-connection-test')
+  mongoose.connect('mongodb://localhost/mongo-relay-connection-test', { useMongoClient: true })
   mongoose.connection
     .once('open', async () => {
       // console.log('Connected to mongo')
