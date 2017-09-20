@@ -298,6 +298,73 @@ describe('transverse forward', () => {
     assert(!pageInfo.endCursor)
     expect(edges.length).to.equal(0)
   })
+
+  it('should tranverse forward via page info cursor for all files', async () => {
+    const query = (first, after) => {
+      return `
+        {
+          allFiles(first: ${first}, after: "${after}") {
+            pageInfo {
+              hasNextPage
+              hasPreviousPage
+              startCursor
+              endCursor
+            }
+            edges {
+              node {
+                name
+                type
+                stats {
+                  size
+                }
+              }
+            }
+          }
+        }
+      `
+    }
+
+    const query1 = query(45, '')
+    let res = await graphql(schema, query1)
+    let { pageInfo, edges } = res.data.allFiles
+    let { hasNextPage, endCursor } = pageInfo
+    assert(hasNextPage)
+    assert(endCursor)
+    expect(edges.map(x => x.node)).to.deep.equal(fileRef.slice(0, 45))
+
+    const query2 = query(45, endCursor)
+    res = await graphql(schema, query2)
+    pageInfo = res.data.allFiles.pageInfo
+    edges = res.data.allFiles.edges
+    assert(pageInfo.hasNextPage)
+    assert(pageInfo.endCursor)
+    expect(edges.map(x => x.node)).to.deep.equal(fileRef.slice(45, 90))
+
+    const query3 = query(45, pageInfo.endCursor)
+    res = await graphql(schema, query3)
+    pageInfo = res.data.allFiles.pageInfo
+    edges = res.data.allFiles.edges
+    assert(pageInfo.hasNextPage)
+    assert(pageInfo.endCursor)
+    expect(edges.map(x => x.node)).to.deep.equal(fileRef.slice(90, 135))
+
+    const query4 = query(45, pageInfo.endCursor)
+    res = await graphql(schema, query4)
+    pageInfo = res.data.allFiles.pageInfo
+    edges = res.data.allFiles.edges
+    assert(!pageInfo.hasNextPage)
+    assert(pageInfo.endCursor)
+    expect(edges.map(x => x.node)).to.deep.equal(fileRef.slice(135))
+
+    const query5 = query(45, pageInfo.endCursor)
+    res = await graphql(schema, query5)
+    pageInfo = res.data.allFiles.pageInfo
+    edges = res.data.allFiles.edges
+    assert(!pageInfo.hasNextPage)
+    assert(!pageInfo.startCursor)
+    assert(!pageInfo.endCursor)
+    expect(edges.length).to.equal(0)
+  })
 })
 
 describe('transverse backward', () => {
