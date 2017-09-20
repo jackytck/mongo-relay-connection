@@ -153,7 +153,7 @@ describe('all edges', () => {
 })
 
 describe('transverse forward', () => {
-  it('should tranverse forward via page info cursor for all starships', async () => {
+  it('should transverse forward via page info cursor for all starships', async () => {
     const query = (first, after) => {
       return `
         {
@@ -226,7 +226,7 @@ describe('transverse forward', () => {
     expect(edges.length).to.equal(0)
   })
 
-  it('should tranverse forward via page info cursor for all food product', async () => {
+  it('should transverse forward via page info cursor for all food product', async () => {
     const query = (first, after) => {
       return `
         {
@@ -299,7 +299,7 @@ describe('transverse forward', () => {
     expect(edges.length).to.equal(0)
   })
 
-  it('should tranverse forward via page info cursor for all files', async () => {
+  it('should transverse forward via page info cursor for all files', async () => {
     const query = (first, after) => {
       return `
         {
