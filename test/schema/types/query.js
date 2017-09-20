@@ -14,6 +14,8 @@ import {
 } from './product'
 import ProductModel from '../../models/product'
 import foodTypes from '../../data/foodTypes.json'
+import File from './file'
+import FileModel from '../../models/file'
 
 const RootQuery = new GraphQLObjectType({
   name: 'RootQuery',
@@ -82,6 +84,20 @@ const RootQuery = new GraphQLObjectType({
           }
         }
         return mrResolve(args, ProductModel, query, opts)
+      }
+    },
+    allFiles: {
+      type: mrType('SystemFile', File),
+      args: mrArgs,
+      resolve (parentValue, args) {
+        const query = {
+          'stats.size': { $gte: 500 }
+        }
+        const opts = {
+          cursorField: 'stats.size',
+          direction: -1
+        }
+        return mrResolve(args, FileModel, query, opts)
       }
     }
   }
