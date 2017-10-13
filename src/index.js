@@ -1,16 +1,17 @@
 import {
-  GraphQLInt
-} from 'graphql'
+  last as _last,
+  isEmpty,
+  isNumber,
+  reverse
+} from 'lodash'
 import {
   connectionArgs,
   connectionDefinitions
 } from 'graphql-relay'
+
 import {
-  isNumber,
-  reverse,
-  last as _last,
-  isEmpty
-} from 'lodash'
+  GraphQLInt
+} from 'graphql'
 import base64 from 'base-64'
 import utf8 from 'utf8'
 

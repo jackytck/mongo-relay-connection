@@ -1,26 +1,28 @@
 import 'babel-polyfill'
-import assert from 'assert'
-import { graphql } from 'graphql'
+
 import {
-  sortBy,
-  pick
+  mrDateFromCursor,
+  mrDateToCursor,
+  mrDefaultFromCursor,
+  mrDefaultToCursor
+} from '../src'
+import {
+  pick,
+  sortBy
 } from 'lodash'
-import mongoose from 'mongoose'
-import { expect } from 'chai'
-import Starship from './models/starship'
-import Product from './models/product'
+
 import File from './models/file'
+import Product from './models/product'
+import Starship from './models/starship'
+import assert from 'assert'
+import { expect } from 'chai'
+import filesJSON from './data/files.json'
+import foodTypes from './data/foodTypes.json'
+import { graphql } from 'graphql'
+import mongoose from 'mongoose'
+import productsJSON from './data/products.json'
 import schema from './schema/schema'
 import starshipsJSON from './data/starships.json'
-import foodTypes from './data/foodTypes.json'
-import productsJSON from './data/products.json'
-import filesJSON from './data/files.json'
-import {
-  mrDefaultToCursor,
-  mrDefaultFromCursor,
-  mrDateToCursor,
-  mrDateFromCursor
-} from '../src'
 
 const starshipsRef = sortBy(starshipsJSON.data.allStarships.edges, x => x.node.starshipClass)
 const foodRef = sortBy(productsJSON.filter(x => foodTypes.indexOf(x.type) > -1), x => -x.price)

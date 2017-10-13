@@ -1,10 +1,10 @@
-import mongoose from 'mongoose'
-import Starship from './models/starship'
-import Product from './models/product'
 import File from './models/file'
-import starshipData from './data/starships.json'
-import productData from './data/products.json'
+import Product from './models/product'
+import Starship from './models/starship'
 import fileData from './data/files.json'
+import mongoose from 'mongoose'
+import productData from './data/products.json'
+import starshipData from './data/starships.json'
 
 mongoose.Promise = global.Promise
 
