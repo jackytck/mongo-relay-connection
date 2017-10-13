@@ -61,3 +61,7 @@ before(done => {
       console.warn('Warning', error)
     })
 })
+
+after(() => {
+  mongoose.connection.close()
+})
