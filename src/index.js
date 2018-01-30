@@ -173,9 +173,9 @@ async function mrResolve (args, model, query = {}, { populateArgs, cursorField =
     throw new Error(`last(${last}) could not be negative`)
   }
   const limit = first || last
-  const nodes = await (typeof populateArgs !== 'undefined')
-    ? model.find(finalQuery).limit(limit).sort(multiSort).populate(populateArgs)
-    : model.find(finalQuery).limit(limit).sort(multiSort)
+  const nodes = (typeof populateArgs !== 'undefined')
+    ? await model.find(finalQuery).limit(limit).sort(multiSort).populate(populateArgs)
+    : await model.find(finalQuery).limit(limit).sort(multiSort)
   let edges = nodes.map(node => {
     return {
       node: mapNode(node),
