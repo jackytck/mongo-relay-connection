@@ -1,21 +1,24 @@
 import {
-  GraphQLObjectType
-} from 'graphql'
-import {
-  mrType,
-  mrArgs,
-  mrResolve
-} from '../../../src'
-import Starship from './starship'
-import StarshipModel from '../../models/starship'
-import {
   Product,
   ProductPrice
 } from './product'
-import ProductModel from '../../models/product'
-import foodTypes from '../../data/foodTypes.json'
+import {
+  mrArgs,
+  mrResolve,
+  mrType
+} from '../../../src'
+
 import File from './file'
 import FileModel from '../../models/file'
+import {
+  GraphQLObjectType
+} from 'graphql'
+import ProductModel from '../../models/product'
+import Starship from './starship'
+import StarshipModel from '../../models/starship'
+import Story from './story'
+import StoryModel from '../../models/story'
+import foodTypes from '../../data/foodTypes.json'
 
 const RootQuery = new GraphQLObjectType({
   name: 'RootQuery',
@@ -98,6 +101,18 @@ const RootQuery = new GraphQLObjectType({
           direction: -1
         }
         return mrResolve(args, FileModel, query, opts)
+      }
+    },
+    allStories: {
+      type: mrType('Story', Story),
+      args: mrArgs,
+      resolve (parentValue, args) {
+        const query = {}
+        const opts = {
+          direction: -1,
+          populate: 'author'
+        }
+        return mrResolve(args, StoryModel, query, opts)
       }
     }
   }
