@@ -80,7 +80,7 @@ function leaf (object, path) {
  * @param {number} direction 1 to sort ascendingly, -1 to sort decendingly.
  * note: if both first and last are given, then last is ignored
  */
-async function mrResolve (args, model, query = {}, { cursorField = '_id', direction = 1, toCursor = mrDefaultToCursor, fromCursor = mrDefaultFromCursor, mapNode = x => x } = {}) {
+async function mrResolve (args, model, query = {}, { populateArgs, cursorField = '_id', direction = 1, toCursor = mrDefaultToCursor, fromCursor = mrDefaultFromCursor, mapNode = x => x } = {}) {
   if (!isNumber(direction)) {
     direction = 1
   }
@@ -173,7 +173,9 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     throw new Error(`last(${last}) could not be negative`)
   }
   const limit = first || last
-  const nodes = await model.find(finalQuery).limit(limit).sort(multiSort)
+  const nodes = await (typeof populateArgs !== 'undefined')
+      ? model.find(finalQuery).limit(limit).sort(multiSort).populate(populateArgs)
+      : model.find(finalQuery).limit(limit).sort(multiSort)
   let edges = nodes.map(node => {
     return {
       node: mapNode(node),
