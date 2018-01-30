@@ -1,6 +1,8 @@
 import File from './models/file'
+import Person from './models/person'
 import Product from './models/product'
 import Starship from './models/starship'
+import Story from './models/story'
 import fileData from './data/files.json'
 import mongoose from 'mongoose'
 import productData from './data/products.json'
@@ -12,7 +14,9 @@ function clearDB () {
   return Promise.all([
     Starship.remove(),
     Product.remove(),
-    File.remove()
+    File.remove(),
+    Story.remove(),
+    Person.remove()
   ])
 }
 
@@ -38,11 +42,25 @@ function populateFile () {
   }))
 }
 
+async function populateStory () {
+  const p1 = new Person({ name: 'Richard Feynman', age: 69 })
+  const p2 = new Person({ name: 'Nikola Tesla', age: 86 })
+  const s1 = new Story({ title: 'Feynman Diagram', author: p1._id })
+  const s2 = new Story({ title: 'Tesla Coil', author: p2._id })
+  await Promise.all([
+    p1.save(),
+    p2.save(),
+    s1.save(),
+    s2.save()
+  ])
+}
+
 function populateData () {
   return Promise.all([
     populateStarship(),
     populateProduct(),
-    populateFile()
+    populateFile(),
+    populateStory()
   ])
 }
 

@@ -1826,3 +1826,46 @@ describe('default resolve() query and options', () => {
     expect(defaultQueryOpts.edges).to.deep.equal(ref)
   })
 })
+
+describe('resolve() with option: populate', () => {
+  it('should fetch all stories with the populated authors', async () => {
+    const query = `
+      {
+        allStories {
+          edges {
+            node {
+              title
+              author {
+                name
+                age
+              }
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { allStories } = res.data
+    const ref = [
+      {
+        'node': {
+          'title': 'Feynman Diagram',
+          'author': {
+            'name': 'Richard Feynman',
+            'age': 69
+          }
+        }
+      },
+      {
+        'node': {
+          'title': 'Tesla Coil',
+          'author': {
+            'name': 'Nikola Tesla',
+            'age': 86
+          }
+        }
+      }
+    ]
+    expect(allStories.edges).to.deep.equal(ref)
+  })
+})
