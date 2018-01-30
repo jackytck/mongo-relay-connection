@@ -174,8 +174,8 @@ async function mrResolve (args, model, query = {}, { populateArgs, cursorField =
   }
   const limit = first || last
   const nodes = await (typeof populateArgs !== 'undefined')
-      ? model.find(finalQuery).limit(limit).sort(multiSort).populate(populateArgs)
-      : model.find(finalQuery).limit(limit).sort(multiSort)
+    ? model.find(finalQuery).limit(limit).sort(multiSort).populate(populateArgs)
+    : model.find(finalQuery).limit(limit).sort(multiSort)
   let edges = nodes.map(node => {
     return {
       node: mapNode(node),
