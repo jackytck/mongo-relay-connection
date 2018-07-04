@@ -51,6 +51,26 @@ const RootQuery = new GraphQLObjectType({
         return mrResolve(args, StarshipModel)
       }
     },
+    allProductsAsc: {
+      type: mrType('AllProductsAsc', Product),
+      args: mrArgs,
+      resolve (parentValue, args) {
+        const query = {}
+        const opts = {}
+        return mrResolve(args, ProductModel, query, opts)
+      }
+    },
+    allProductsDesc: {
+      type: mrType('AllProductsDesc', Product),
+      args: mrArgs,
+      resolve (parentValue, args) {
+        const query = {}
+        const opts = {
+          direction: -1
+        }
+        return mrResolve(args, ProductModel, query, opts)
+      }
+    },
     allFoodProducts: {
       type: mrType('FoodProduct', Product),
       args: mrArgs,

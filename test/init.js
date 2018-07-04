@@ -50,9 +50,9 @@ async function populateStory () {
   await Promise.all([
     p1.save(),
     p2.save(),
-    s1.save(),
-    s2.save()
+    s1.save()
   ])
+  await s2.save() // so that s2 is saved after s1
 }
 
 function populateData () {

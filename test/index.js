@@ -8,6 +8,7 @@ import {
 } from '../src'
 import {
   pick,
+  reverse,
   sortBy
 } from 'lodash'
 
@@ -1610,6 +1611,48 @@ describe('date cursors', () => {
   })
 })
 
+describe('default _id cursor field with direction 1', () => {
+  it('should fetch all products in descending _id', async () => {
+    const query = `
+      {
+        allProductsAsc {
+          edges {
+            node {
+              name
+              type
+              price
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { allProductsAsc } = res.data
+    expect(allProductsAsc.edges.map(x => x.node)).to.deep.equal(productsJSON)
+  })
+})
+
+describe('default _id cursor field with direction -1', () => {
+  it('should fetch all products in descending _id', async () => {
+    const query = `
+      {
+        allProductsDesc {
+          edges {
+            node {
+              name
+              type
+              price
+            }
+          }
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    const { allProductsDesc } = res.data
+    expect(allProductsDesc.edges.map(x => x.node)).to.deep.equal(reverse(productsJSON))
+  })
+})
+
 describe('after a valid but removed cursor', () => {
   it('should fetch all the starships after the removed cursor', async () => {
     const pageQuery = `
@@ -1849,19 +1892,19 @@ describe('resolve() with option: populate', () => {
     const ref = [
       {
         'node': {
-          'title': 'Feynman Diagram',
+          'title': 'Tesla Coil',
           'author': {
-            'name': 'Richard Feynman',
-            'age': 69
+            'name': 'Nikola Tesla',
+            'age': 86
           }
         }
       },
       {
         'node': {
-          'title': 'Tesla Coil',
+          'title': 'Feynman Diagram',
           'author': {
-            'name': 'Nikola Tesla',
-            'age': 86
+            'name': 'Richard Feynman',
+            'age': 69
           }
         }
       }

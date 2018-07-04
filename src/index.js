@@ -98,6 +98,9 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   }
 
   let idSort = 1
+  if (cursorField === '_id') {
+    idSort = direction
+  }
 
   let afterQuery = {}
   let beforeQuery = {}
