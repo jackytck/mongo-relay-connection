@@ -110,6 +110,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     // Let afterEdge be the edge in edges whose cursor is equal to the after argument.
     // if field is found, if it is unique, then count is 1, otherwise larger than 1.
     const afterEdgeCount = await model.count({ ...query, [cursorField]: field })
+
     // Remove all elements of edges before and including afterEdge.
     if (direction === 1) {
       afterQuery[cursorField] = { $gt: field }

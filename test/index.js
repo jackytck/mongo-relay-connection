@@ -45,24 +45,24 @@ const fileRef = sortBy(filesJSON.filter(x => x.stats.size >= 500), x => -x.stats
 
 describe('mongo data', () => {
   it('should fetch correct number of starships from mongo', async () => {
-    const cnt = await Starship.count()
+    const cnt = await Starship.countDocuments()
     assert(cnt === 36)
   })
 
   it('should fetch correct number of products from mongo', async () => {
-    const cnt = await Product.count()
+    const cnt = await Product.countDocuments()
     assert(cnt === 300)
   })
 
   it('should fetch correct number of food products from mongo', async () => {
-    const cnt = await Product.count({
+    const cnt = await Product.countDocuments({
       type: { $in: foodTypes }
     })
     assert(cnt === 102)
   })
 
   it('should fetch correct number of files from mongo', async () => {
-    const cnt = await File.count()
+    const cnt = await File.countDocuments()
     assert(cnt === 300)
   })
 })

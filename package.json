@@ -59,7 +59,7 @@
     "graphql": "^0.13.2",
     "graphql-relay": "^0.5.5",
     "mocha": "^5.1.1",
-    "mongoose": "^5.0.16",
+    "mongoose": "^5.2.1",
     "nodemon": "^1.17.3",
     "nyc": "^11.7.1"
   },
