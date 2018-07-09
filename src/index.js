@@ -109,7 +109,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     const { field, id } = fromCursor(after)
     // Let afterEdge be the edge in edges whose cursor is equal to the after argument.
     // if field is found, if it is unique, then count is 1, otherwise larger than 1.
-    const afterEdgeCount = await model.count({ ...query, [cursorField]: field })
+    const afterEdgeCount = await model.countDocuments({ ...query, [cursorField]: field })
 
     // Remove all elements of edges before and including afterEdge.
     if (direction === 1) {
@@ -132,7 +132,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   if (before) {
     const { field, id } = fromCursor(before)
     // Let beforeEdge be the edge in edges whose cursor is equal to the before argument.
-    const beforeEdgeCount = await model.count({ ...query, [cursorField]: field })
+    const beforeEdgeCount = await model.countDocuments({ ...query, [cursorField]: field })
     // Remove all elements of edges after and including beforeEdge.
     if (direction === 1) {
       beforeQuery[cursorField] = { $lt: field }
@@ -189,7 +189,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     edges = reverse(edges)
   }
 
-  const edgesCount = await model.find(finalQuery).count()
+  const edgesCount = await model.find(finalQuery).countDocuments()
 
   let hasPreviousPage = false
   if (last && edgesCount > last) {
@@ -218,7 +218,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   return {
     pageInfo,
     edges,
-    totalCount: model.find(query).count()
+    totalCount: model.find(query).countDocuments()
   }
 }
 
