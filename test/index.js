@@ -1675,7 +1675,7 @@ describe('after a valid but removed cursor', () => {
     // remove the last node from db
     const rmId = pageRes.data.allStarships.edges[4].node.id
     const rmNode = await Starship.findOne({ _id: rmId })
-    await rmNode.remove()
+    await Starship.deleteOne({ _id: rmId })
 
     const query = `
       {
@@ -1722,7 +1722,7 @@ describe('after a valid but removed cursor', () => {
     // remove the last node from db
     const rmId = pageRes.data.allFoodProducts.edges[11].node.id
     const rmNode = await Product.findOne({ _id: rmId })
-    await rmNode.remove()
+    await Product.deleteOne({ _id: rmId })
 
     const query = `
       {
@@ -1773,7 +1773,7 @@ describe('before a valid but removed cursor', () => {
     // remove the last node from db
     const rmId = pageRes.data.allStarships.edges[29].node.id
     const rmNode = await Starship.findOne({ _id: rmId })
-    await rmNode.remove()
+    await Starship.deleteOne({ _id: rmId })
 
     const query = `
       {
@@ -1820,7 +1820,7 @@ describe('before a valid but removed cursor', () => {
     // remove the last node from db
     const rmId = pageRes.data.allFoodProducts.edges[79].node.id
     const rmNode = Product.findOne({ _id: rmId })
-    await rmNode.remove()
+    await Product.deleteOne({ _id: rmId })
 
     const query = `
       {

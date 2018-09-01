@@ -12,11 +12,11 @@ mongoose.Promise = global.Promise
 
 function clearDB () {
   return Promise.all([
-    Starship.remove(),
-    Product.remove(),
-    File.remove(),
-    Story.remove(),
-    Person.remove()
+    Starship.deleteMany(),
+    Product.deleteMany(),
+    File.deleteMany(),
+    Story.deleteMany(),
+    Person.deleteMany()
   ])
 }
 
