@@ -1,6 +1,6 @@
 {
   "name": "mongo-relay-connection",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Helper for building relay connection from mongoose. Support dynamic collection, but only for single (unique or non-unique) field sorting.",
   "main": "lib/index.js",
   "scripts": {
