@@ -73,6 +73,6 @@
     "graphql-relay": "^0.5.5"
   },
   "engines": {
-    "node": ">= 6.x"
+    "node": "6.x || 8.x || >= 10.x"
   }
 }
