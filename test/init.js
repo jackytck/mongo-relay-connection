@@ -70,7 +70,8 @@ function populateData () {
 }
 
 // executed only once
-before(async () => {
+before(async function () {
+  this.timeout(60000)
   if (!mongoServer.isRunning) {
     await mongoServer.start()
   }
