@@ -1,3 +1,4 @@
+import { MongoMemoryServer } from 'mongodb-memory-server'
 import File from './models/file'
 import Person from './models/person'
 import Product from './models/product'
@@ -7,6 +8,10 @@ import fileData from './data/files.json'
 import mongoose from 'mongoose'
 import productData from './data/products.json'
 import starshipData from './data/starships.json'
+
+const mongoServer = new MongoMemoryServer({
+  autoStart: false,
+})
 
 mongoose.Promise = global.Promise
 
@@ -65,21 +70,22 @@ function populateData () {
 }
 
 // executed only once
-before(done => {
-  mongoose.connect('mongodb://localhost:27017/mongo-relay-connection-test', { useNewUrlParser: true })
-  mongoose.connection
-    .once('open', async () => {
-      // console.log('Connected to mongo')
-      await clearDB()
-      await populateData()
-      // console.log('Populated data')
-      done()
-    })
-    .on('error', error => {
-      console.warn('Warning', error)
-    })
+before(async () => {
+  if (!mongoServer.isRunning) {
+    await mongoServer.start();
+  }
+
+  const mongoUri = await mongoServer.getConnectionString()
+
+  await mongoose.connect(mongoUri, { useNewUrlParser: true })
+
+  // console.log('Connected to mongo')
+  await clearDB()
+  await populateData()
+  // console.log('Populated data')
 })
 
 after(() => {
   mongoose.connection.close()
+  mongoServer.stop()
 })
