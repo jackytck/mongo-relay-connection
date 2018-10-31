@@ -1,7 +1,5 @@
 sudo: false
 language: node_js
-services:
-  - mongodb
 cache:
   yarn: true
   directories:
@@ -10,8 +8,6 @@ node_js:
   - '10'
   - '8'
   - '6'
-before_script:
-  - sleep 15
 script:
   - yarn test
 after_script:
