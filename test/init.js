@@ -1,5 +1,5 @@
-import { MongoMemoryServer } from 'mongodb-memory-server'
 import File from './models/file'
+import { MongoMemoryServer } from 'mongodb-memory-server'
 import Person from './models/person'
 import Product from './models/product'
 import Starship from './models/starship'
@@ -10,7 +10,7 @@ import productData from './data/products.json'
 import starshipData from './data/starships.json'
 
 const mongoServer = new MongoMemoryServer({
-  autoStart: false,
+  autoStart: false
 })
 
 mongoose.Promise = global.Promise
@@ -72,17 +72,14 @@ function populateData () {
 // executed only once
 before(async () => {
   if (!mongoServer.isRunning) {
-    await mongoServer.start();
+    await mongoServer.start()
   }
 
   const mongoUri = await mongoServer.getConnectionString()
-
   await mongoose.connect(mongoUri, { useNewUrlParser: true })
 
-  // console.log('Connected to mongo')
   await clearDB()
   await populateData()
-  // console.log('Populated data')
 })
 
 after(() => {
