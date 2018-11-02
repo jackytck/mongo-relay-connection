@@ -1,7 +1,7 @@
 import base64 from 'base-64'
 
 /**
- * Sample model to / form cursors functions.
+ * Helper function for mapping date to cursor.
  */
 function mrDateToCursor (date, id) {
   const m = {

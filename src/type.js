@@ -1,5 +1,5 @@
-import { connectionDefinitions } from 'graphql-relay'
 import { GraphQLInt } from 'graphql'
+import { connectionDefinitions } from 'graphql-relay'
 
 /**
  * Create a type called `${name}Connection`.

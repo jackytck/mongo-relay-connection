@@ -1,10 +1,10 @@
 import _last from 'lodash/last'
 import isEmpty from 'lodash/isEmpty'
 import isNumber from 'lodash/isNumber'
-import reverse from 'lodash/reverse'
-import mrDefaultToCursor from './defaultToCursor'
-import mrDefaultFromCursor from './defaultFromCursor'
 import leaf from './leaf'
+import mrDefaultFromCursor from './defaultFromCursor'
+import mrDefaultToCursor from './defaultToCursor'
+import reverse from 'lodash/reverse'
 
 /**
  * Query and resolve according to the pagination algorithm.
