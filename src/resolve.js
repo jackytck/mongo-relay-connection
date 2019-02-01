@@ -114,16 +114,6 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     throw new Error(`last(${last}) could not be negative`)
   }
   const limit = first || last
-  const nodes = await model.find(finalQuery).limit(limit).sort(multiSort).populate(populate)
-  let edges = nodes.map(node => {
-    return {
-      node: mapNode(node),
-      cursor: toCursor(leaf(node, cursorField), node.id)
-    }
-  })
-  if (last) {
-    edges = reverse(edges)
-  }
 
   // special optimization:
   // if limit (from first or last) is specified,
@@ -133,7 +123,20 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   if (limit) {
     cntLimit = limit + 1
   }
-  const edgesCount = await model.find(finalQuery).limit(cntLimit).countDocuments()
+  const [nodes, totalCount, edgesCount] = await Promise.all([
+    model.find(finalQuery).limit(limit).sort(multiSort).populate(populate),
+    model.find(query).countDocuments(),
+    model.find(finalQuery).limit(cntLimit).countDocuments()
+  ])
+  let edges = nodes.map(node => {
+    return {
+      node: mapNode(node),
+      cursor: toCursor(leaf(node, cursorField), node.id)
+    }
+  })
+  if (last) {
+    edges = reverse(edges)
+  }
 
   let hasPreviousPage = false
   if (last && edgesCount > last) {
@@ -162,7 +165,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   return {
     pageInfo,
     edges,
-    totalCount: model.find(query).countDocuments()
+    totalCount
   }
 }
 
