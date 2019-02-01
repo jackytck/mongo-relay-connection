@@ -125,7 +125,15 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     edges = reverse(edges)
   }
 
-  const edgesCount = await model.find(finalQuery).countDocuments()
+  // special optimization:
+  // if limit (from first or last) is specified,
+  // then edgesCount could be limited by a bigger number than limit,
+  // instead of counting all docs, to infer if more pages is available.
+  let cntLimit
+  if (limit) {
+    cntLimit = limit + 1
+  }
+  const edgesCount = await model.find(finalQuery).limit(cntLimit).countDocuments()
 
   let hasPreviousPage = false
   if (last && edgesCount > last) {
