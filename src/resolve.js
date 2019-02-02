@@ -17,7 +17,7 @@ import reverse from 'lodash/reverse'
  * @param {string} populate Mongoose field(s) to be populated.
  * note: if both first and last are given, then last is ignored
  */
-async function mrResolve (args, model, query = {}, { cursorField = '_id', direction = 1, toCursor = mrDefaultToCursor, fromCursor = mrDefaultFromCursor, mapNode = x => x, populate = '' } = {}) {
+async function mrResolve (args, model, query = {}, { cursorField = '_id', direction = 1, toCursor = mrDefaultToCursor, fromCursor = mrDefaultFromCursor, mapNode = x => x, populate = '', totalCount = null } = {}) {
   if (!isNumber(direction)) {
     direction = 1
   }
@@ -123,17 +123,25 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   if (limit) {
     cntLimit = limit + 1
   }
-  const [nodes, totalCount, edgesCount] = await Promise.all([
-    model.find(finalQuery).limit(limit).sort(multiSort).populate(populate),
-    model.find(query).countDocuments(),
-    model.find(finalQuery).limit(cntLimit).countDocuments()
-  ])
+  const pNodes = model.find(finalQuery).limit(cntLimit).sort(multiSort).populate(populate)
+
+  // if totalCount is given, skip the count operation
+  let pTotalCnt = totalCount
+  if (pTotalCnt === null) {
+    pTotalCnt = model.find(query).countDocuments()
+  }
+  const [nodes, tc] = await Promise.all([ pNodes, pTotalCnt ])
+  const edgesCount = nodes.length
+
   let edges = nodes.map(node => {
     return {
       node: mapNode(node),
       cursor: toCursor(leaf(node, cursorField), node.id)
     }
   })
+  if (limit && edgesCount > limit) {
+    edges.pop()
+  }
   if (last) {
     edges = reverse(edges)
   }
@@ -165,7 +173,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   return {
     pageInfo,
     edges,
-    totalCount
+    totalCount: tc
   }
 }
 
