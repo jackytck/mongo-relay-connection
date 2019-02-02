@@ -1,4 +1,8 @@
 import {
+  GraphQLInt,
+  GraphQLObjectType
+} from 'graphql'
+import {
   Product,
   ProductPrice
 } from './product'
@@ -10,9 +14,6 @@ import {
 
 import File from './file'
 import FileModel from '../../models/file'
-import {
-  GraphQLObjectType
-} from 'graphql'
 import ProductModel from '../../models/product'
 import Starship from './starship'
 import StarshipModel from '../../models/starship'
@@ -25,10 +26,14 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     allStarships: {
       type: mrType('Starships', Starship),
-      args: mrArgs,
+      args: {
+        ...mrArgs,
+        totalCount: { type: GraphQLInt }
+      },
       resolve (parentValue, args) {
         const opts = {
-          cursorField: 'starshipClass'
+          cursorField: 'starshipClass',
+          totalCount: args.totalCount
         }
         return mrResolve(args, StarshipModel, {}, opts)
       }

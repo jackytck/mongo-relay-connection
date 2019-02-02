@@ -1912,3 +1912,30 @@ describe('resolve() with option: populate', () => {
     expect(allStories.edges).to.deep.equal(ref)
   })
 })
+
+describe('resolve() with option: totalCount', () => {
+  it('should fetch original total counts from db', async () => {
+    const query = `
+      {
+        allStarships {
+          totalCount
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    expect(res.data.allStarships.totalCount).to.equal(36)
+  })
+
+  it('should return arbitrary total counts from input args', async () => {
+    const cnt = 123
+    const query = `
+      {
+        allStarships(totalCount: ${cnt}) {
+          totalCount
+        }
+      }
+    `
+    const res = await graphql(schema, query)
+    expect(res.data.allStarships.totalCount).to.equal(cnt)
+  })
+})
