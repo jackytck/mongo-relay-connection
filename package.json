@@ -50,7 +50,7 @@
     "chai": "^4.2.0",
     "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
-    "eslint": "^5.12.1",
+    "eslint": "^5.13.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-node": "^8.0.1",
@@ -60,7 +60,7 @@
     "graphql-relay": "^0.6.0",
     "mocha": "^5.1.1",
     "mongodb-memory-server": "^3.0.0",
-    "mongoose": "^5.4.8",
+    "mongoose": "^5.4.9",
     "nodemon": "^1.18.9",
     "nyc": "^13.1.0"
   },
@@ -70,8 +70,8 @@
     "utf8": "^3.0.0"
   },
   "peerDependencies": {
-    "graphql": "^0.5.0 || ^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.3 || ^0.13.2 || ^14.0.0",
-    "graphql-relay": "^0.5.5"
+    "graphql": "^0.5.0 || ^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.3 || ^0.13.2 || ^14.1.1",
+    "graphql-relay": "^0.6.0"
   },
   "engines": {
     "node": "6.x || 8.x || >= 10.x"
