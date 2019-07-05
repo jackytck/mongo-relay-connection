@@ -5,9 +5,9 @@ cache:
   directories:
     - node_modules
 node_js:
+  - '11'
   - '10'
   - '8'
-  - '6'
 script:
   - yarn test
 after_script:
