@@ -29,7 +29,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
     last = null
   }
 
-  let sort = {
+  const sort = {
     [cursorField]: direction
   }
 
@@ -130,7 +130,7 @@ async function mrResolve (args, model, query = {}, { cursorField = '_id', direct
   if (pTotalCnt === null) {
     pTotalCnt = model.find(query).countDocuments()
   }
-  const [nodes, tc] = await Promise.all([ pNodes, pTotalCnt ])
+  const [nodes, tc] = await Promise.all([pNodes, pTotalCnt])
   const edgesCount = nodes.length
 
   let edges = nodes.map(node => {
